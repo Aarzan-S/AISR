@@ -1,16 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-
 <?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.aisr.initial.controller.LoginController">
-  <padding>
-    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-  </padding>
-
-  <Label fx:id="welcomeText"/>
-  <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.*?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+            prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.aisr.initial.controller.LoginController">
+  <children>
+    <Text layoutX="101.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0"
+          text="Australian Intelligent Space Recruit">
+      <font>
+        <Font name="System Bold" size="24.0"/>
+      </font>
+    </Text>
+    <Text layoutX="285.0" layoutY="79.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login">
+      <font>
+        <Font size="14.0"/>
+      </font>
+    </Text>
+    <Text layoutX="172.0" layoutY="160.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username"/>
+    <TextField fx:id="loginUserName" layoutX="258.0" layoutY="143.0" prefHeight="25.0" prefWidth="195.0"/>
+    <Text layoutX="173.0" layoutY="205.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password"/>
+    <PasswordField fx:id="loginUserPassword" layoutX="258.0" layoutY="188.0" prefHeight="25.0" prefWidth="195.0"/>
+    <Button fx:id="loginBtn" layoutX="278.0" layoutY="228.0" mnemonicParsing="false" onAction="#onLoginClicked"
+            onMouseClicked="#onLoginClicked" prefHeight="25.0" prefWidth="82.0" text="Login" textFill="#575141"/>
+    <Label fx:id="err" alignment="CENTER" contentDisplay="CENTER" layoutX="161.0" layoutY="101.0" prefHeight="25.0"
+           prefWidth="304.0" textFill="RED"/>
+  </children>
+</AnchorPane>
