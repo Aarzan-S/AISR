@@ -1,5 +1,7 @@
 package com.aisr.initial.controller;
 
+import com.aisr.initial.util.FileUtil;
+import com.aisr.initial.util.HashingUtil;
 import com.aisr.initial.util.NavigationHelper;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
@@ -10,14 +12,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
-
+    static int noOfEntries = 0;
     @FXML
     private TextField loginUserName;
     @FXML
@@ -38,39 +39,47 @@ public class LoginController implements Initializable {
     @FXML
     void onLoginClicked(ActionEvent event) throws Exception {
         boolean isPresent = false;
-        String userRole = "";
-        if (loginUserName.getText().trim().equals("superadmin") && loginUserName.getText().trim().equals("superadmin")) {
-            userRole = "Staff";
-            NavigationHelper.navigate(event, userRole, loginUserName.getText().trim());
-            return;
+        String userRole = validateUser();
+        if (!userRole.equals("")){
+            isPresent = true;
         }
-        File file = new File("staff.csv");
-        if (!file.exists()) {
-            err.setText("Staff record file not found.");
-            throw new Exception("Staff record file not found");
-        }
-
-        try (BufferedReader br = new BufferedReader(new FileReader("staff.csv"))) {
-            String line;
-            br.readLine();
-            while ((line = br.readLine()) != null) {
-                String[] columns = line.split(",");
-                if (loginUserName.getText().trim().equals(columns[5].trim()) &&
-                        loginUserPassword.getText().trim().equals(columns[6].trim())) {
-                    isPresent = true;
-                    userRole = columns[0].trim();
-                    break;
-                }
+        if (userRole.equals("Staff")) {
+            noOfEntries = FileUtil.countNoOfRecords("staff.csv");
+            if (noOfEntries < 0){
+                err.setText("File not present.");
             }
-        } catch (IOException e) {
-            System.err.println("Could not read staff record file.");
         }
-
         if (isPresent) {
             NavigationHelper.navigate(event, userRole, loginUserName.getText().trim());
         } else {
             err.setText("Incorrect Username or password");
             throw new Exception("Incorrect Username or password.");
         }
+    }
+
+    private String  validateUser() throws Exception {
+        if (loginUserName.getText().trim().equals("superadmin") && loginUserName.getText().trim().equals("superadmin")) {
+            return "Staff";
+        }
+        if (!FileUtil.doesFileExists("staff.csv")) {
+            err.setText("Staff record file not found.");
+            throw new Exception("Staff record file not found");
+        }
+        try (BufferedReader br = new BufferedReader(new FileReader("staff.csv"))) {
+            String line;
+            br.readLine();
+            while ((line = br.readLine()) != null) {
+                String[] columns = line.split(",");
+                if (loginUserName.getText().trim().equals(columns[5].trim()) &&
+                        HashingUtil.verifyHash(loginUserPassword.getText().trim(), columns[6].trim())) {
+                    return columns[0].trim();
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Could not read staff record file.");
+        }
+        System.out.println("failed to found");
+
+        return "";
     }
 }
