@@ -11,15 +11,15 @@ public class FileUtil {
         return file.exists();
     }
 
-    public static int countNoOfRecords(String fileName) {
+    public static void countNoOfRecords(String fileName) {
         if (doesFileExists(fileName)){
-            try (BufferedReader br = new BufferedReader(new FileReader("staff.csv"))) {
-                return (int) br.lines().count();
+            try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+                Constants.noOfEntries = (int) br.lines().count();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        return 0;
+        Constants.noOfEntries = 1;
     }
 
 }

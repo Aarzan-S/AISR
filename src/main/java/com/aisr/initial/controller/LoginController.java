@@ -1,5 +1,6 @@
 package com.aisr.initial.controller;
 
+import com.aisr.initial.util.Constants;
 import com.aisr.initial.util.FileUtil;
 import com.aisr.initial.util.HashingUtil;
 import com.aisr.initial.util.NavigationHelper;
@@ -18,7 +19,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
-    static int noOfEntries = 0;
     @FXML
     private TextField loginUserName;
     @FXML
@@ -43,12 +43,12 @@ public class LoginController implements Initializable {
         if (!userRole.equals("")){
             isPresent = true;
         }
-        if (userRole.equals("Staff")) {
-            noOfEntries = FileUtil.countNoOfRecords("staff.csv");
-            if (noOfEntries < 0){
-                err.setText("File not present.");
-            }
-        }
+//        if (userRole.equals("Staff")) {
+//            Constants.noOfEntries = FileUtil.countNoOfRecords("staff.csv");
+//            if (Constants.noOfEntries < 0){
+//                err.setText("File not present.");
+//            }
+//        }
         if (isPresent) {
             NavigationHelper.navigate(event, userRole, loginUserName.getText().trim());
         } else {
@@ -61,7 +61,7 @@ public class LoginController implements Initializable {
         if (loginUserName.getText().trim().equals("superadmin") && loginUserName.getText().trim().equals("superadmin")) {
             return "Staff";
         }
-        if (!FileUtil.doesFileExists("staff.csv")) {
+        if (!FileUtil.doesFileExists(Constants.STAFF_CSV_FILE)) {
             err.setText("Staff record file not found.");
             throw new Exception("Staff record file not found");
         }

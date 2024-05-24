@@ -1,22 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
-<?import javafx.scene.control.Button?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
             prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.aisr.initial.controller.ManagementRegistrationController">
     <children>
-        <Button layoutX="14.0" layoutY="13.0" mnemonicParsing="false" onAction="#goBack"
-                onMouseClicked="#goBack" text="Go Back"/>
-        <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="97.0" layoutY="50.0"
+        <Button layoutX="14.0" layoutY="13.0" mnemonicParsing="false" onAction="#goBack" onMouseClicked="#goBack"
+                text="Go Back"/>
+        <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="93.0" layoutY="25.0"
                prefHeight="24.0" prefWidth="390.0">
             <font>
                 <Font size="14.0"/>
             </font>
         </Label>
+        <Label fx:id="managementErrorMessage" alignment="CENTER" contentDisplay="CENTER" layoutX="97.0" layoutY="70.0"
+               prefHeight="24.0" prefWidth="426.0" textFill="#f23939"/>
+        <Label fx:id="managementSuccessMessage" alignment="CENTER" contentDisplay="CENTER" layoutX="74.0" layoutY="70.0"
+               prefHeight="24.0" prefWidth="452.0" textFill="#72d46d"/>
+        <Label layoutX="18.0" layoutY="116.0" text="Full name"/>
+        <TextField fx:id="managementStaffFullname" layoutX="91.0" layoutY="112.0" prefHeight="25.0" prefWidth="197.0"/>
+        <Label layoutX="304.0" layoutY="116.0" prefHeight="17.0" prefWidth="59.0" text="Address"/>
+        <TextField fx:id="managementStaffAddress" layoutX="385.0" layoutY="112.0" prefHeight="25.0" prefWidth="197.0"/>
+        <Label layoutX="18.0" layoutY="165.0" text="Phone"/>
+        <TextField fx:id="managementStaffPhone" layoutX="89.0" layoutY="161.0" prefHeight="25.0" prefWidth="197.0"/>
+        <Label layoutX="306.0" layoutY="165.0" text="Email"/>
+        <TextField fx:id="managementStaffEmail" layoutX="385.0" layoutY="161.0" prefHeight="25.0" prefWidth="197.0"/>
+        <Label layoutX="17.0" layoutY="209.0" text="Username"/>
+        <TextField fx:id="managementStaffUsername" layoutX="91.0" layoutY="205.0" prefHeight="25.0" prefWidth="197.0"/>
+        <Label layoutX="307.0" layoutY="210.0" text="Password"/>
+        <PasswordField fx:id="managementStaffPassword" layoutX="385.0" layoutY="206.0" prefHeight="25.0"
+                       prefWidth="197.0"/>
+        <Label layoutX="19.0" layoutY="257.0" text="Branch"/>
+        <ChoiceBox fx:id="managementStaffBranch" layoutX="90.0" layoutY="253.0" prefHeight="25.0" prefWidth="197.0"/>
+        <Label layoutX="310.0" layoutY="257.0" text="Level"/>
+        <ChoiceBox fx:id="managementStaffManagementLevel" layoutX="386.0" layoutY="253.0" prefHeight="25.0"
+                   prefWidth="197.0"/>
+
+        <Button fx:id="addManagementBtn" layoutX="86.0" layoutY="328.0" mnemonicParsing="false"
+                onAction="#addManagementDetails" prefHeight="25.0" prefWidth="59.0" text="Add"/>
+        <Button layoutX="448.0" layoutY="329.0" mnemonicParsing="false" onAction="#registerManagementStaff"
+                text="Register"/>
     </children>
 </AnchorPane>

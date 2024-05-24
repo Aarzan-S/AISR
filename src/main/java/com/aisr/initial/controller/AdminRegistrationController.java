@@ -1,10 +1,7 @@
 package com.aisr.initial.controller;
 
 import com.aisr.initial.model.AdminStaff;
-import com.aisr.initial.util.HashingUtil;
-import com.aisr.initial.util.NavigationHelper;
-import com.aisr.initial.util.NumberFieldValidator;
-import com.aisr.initial.util.Validator;
+import com.aisr.initial.util.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -79,7 +76,7 @@ public class AdminRegistrationController implements Initializable {
                 , adminStaffEmail.getText().trim()
                 , adminStaffUsername.getText().trim()
                 , HashingUtil.generateHash(adminStaffPassword.getText().trim())
-                , String.valueOf(LoginController.noOfEntries)
+                , String.valueOf(Constants.noOfEntries)
                 , adminStaffPositionType.getValue().trim()
         );
         adminList.add(adminDetails);
@@ -104,6 +101,7 @@ public class AdminRegistrationController implements Initializable {
         try (FileWriter writer = new FileWriter(STAFF_CSV, true)) {
             for (AdminStaff adminData : adminList) {
                 writer.append(adminData.toString()).append("\n");
+                Constants.noOfEntries++;
             }
         } catch (IOException e) {
             System.err.println("Error writing to Staff CSV file: " + e.getMessage());

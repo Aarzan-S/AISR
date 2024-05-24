@@ -1,5 +1,7 @@
 package com.aisr.initial;
 
+import com.aisr.initial.util.Constants;
+import com.aisr.initial.util.FileUtil;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,6 +20,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        FileUtil.countNoOfRecords(Constants.STAFF_CSV_FILE);
         launch();
     }
 }
