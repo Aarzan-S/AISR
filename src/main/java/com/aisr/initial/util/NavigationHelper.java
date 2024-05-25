@@ -39,11 +39,18 @@ public class NavigationHelper {
                     staffController.setUserInfo(userName, userRole);
                     staffController.setWelcomeMessage();
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    stage.setTitle("AIS-R".concat(" Staff Page"));
                     stage.setScene(new Scene(staffPage));
                     stage.show();
                 }
                 case "Management" -> {
+                    FXMLLoader loader = new FXMLLoader(Main.class.getResource("view/Management.fxml"));
+                    Parent staffPage = loader.load();
+                    ManagementController mngtController = loader.getController();
+                    mngtController.setUserInfo(userName, userRole);
+                    mngtController.setWelcomeMessage();
+                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    stage.setScene(new Scene(staffPage));
+                    stage.show();
                 }
                 case "Admin" -> {
                     FXMLLoader loader = new FXMLLoader(Main.class.getResource("view/Admin.fxml"));
@@ -52,7 +59,6 @@ public class NavigationHelper {
                     adminController.setUserInfo(userName, userRole);
                     adminController.setWelcomeMessage();
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    stage.setTitle("AIS-R".concat(" Admin Page"));
                     stage.setScene(new Scene(staffPage));
                     stage.show();
                 }
@@ -70,7 +76,21 @@ public class NavigationHelper {
             RecruitRegistrationController registrationController = loader.getController();
             registrationController.setUserInfo(userName, userRole);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("AIS-R".concat(" Recruit Registration Page"));
+            stage.setScene(new Scene(staffPage));
+            stage.show();
+        } catch (IOException e) {
+            System.out.println("Could not find resource");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void navigateToViewRecruit(ActionEvent event, String userRole, String userName) {
+        try {
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource("view/ViewRecruit.fxml"));
+            Parent staffPage = loader.load();
+            RecruitRegistrationController registrationController = loader.getController();
+            registrationController.setUserInfo(userName, userRole);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(staffPage));
             stage.show();
         } catch (IOException e) {

@@ -57,17 +57,20 @@ public class AdminRegistrationController implements Initializable {
     private void addAdminDetails() {
         if (adminStaffFullName.getText().trim().equalsIgnoreCase("admin")
                 || adminStaffFullName.getText().trim().equalsIgnoreCase("superadmin")) {
-            System.err.println("Username cannot be admin/superadmin");
-            adminErrorMessage.setText("Username cannot be admin/superadmin");
+            showErrorMessage("Username cannot be admin/superadmin", adminErrorMessage);
             return;
         }
         if (!Validator.validatePhoneNumber(adminStaffPhone.getText().trim())) {
-            System.err.println("Phone Number is not valid.");
-            adminErrorMessage.setText("Phone Number is not valid.");
+            showErrorMessage("Phone Number is not valid.", adminErrorMessage);
             return;
         } else if (!Validator.validateEmail(adminStaffEmail.getText().trim())) {
-            System.err.println("Email is not valid.");
-            adminErrorMessage.setText("Email is not valid.");
+            showErrorMessage("Email is not valid.", adminErrorMessage);
+            return;
+        }
+        String errorMessage = FileUtil.checkForDuplicates(adminStaffPhone.getText().trim(),
+                adminStaffEmail.getText().trim(), adminStaffUsername.getText().trim());
+        if (!errorMessage.isEmpty()){
+            showErrorMessage(errorMessage, adminErrorMessage);
             return;
         }
         AdminStaff adminDetails = new AdminStaff(adminStaffFullName.getText().trim()
@@ -120,6 +123,10 @@ public class AdminRegistrationController implements Initializable {
         adminStaffUsername.clear();
         adminStaffPassword.clear();
         adminStaffPositionType.setValue(null);
+    }
+    private static void showErrorMessage(String message, Label label){
+        System.err.println(message);
+        label.setText(message);
     }
 
 }

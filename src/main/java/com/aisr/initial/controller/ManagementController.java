@@ -9,7 +9,7 @@ import javafx.scene.control.Label;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class AdminController implements Initializable {
+public class ManagementController implements Initializable {
     private String userName;
 
     private String userRole;
@@ -32,17 +32,13 @@ public class AdminController implements Initializable {
     }
 
     @FXML
-    private void regRecruit(ActionEvent event) {
-        NavigationHelper.navigateToRecruit(event, userRole, userName);
-    }
-
-    @FXML
     private void viewRecruitDetails(ActionEvent event) {
-        // have  to add recruits details page
+        NavigationHelper.navigateToRecruit(event, userRole, userName);
     }
 
     @FXML
     private void logout(ActionEvent event) {
         NavigationHelper.navigate(event, "view/Login.fxml");
     }
+
 }

@@ -1,10 +1,7 @@
 package com.aisr.initial.controller;
 
 import com.aisr.initial.model.ManagementStaff;
-import com.aisr.initial.util.Constants;
-import com.aisr.initial.util.NavigationHelper;
-import com.aisr.initial.util.NumberFieldValidator;
-import com.aisr.initial.util.Validator;
+import com.aisr.initial.util.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -77,13 +74,20 @@ public class ManagementRegistrationController implements Initializable {
             managementErrorMessage.setText("Email is not valid.");
             return;
         }
+        String errorMessage = FileUtil.checkForDuplicates(managementStaffPhone.getText().trim(),
+                managementStaffEmail.getText().trim(), managementStaffUsername.getText().trim());
+        if (!errorMessage.isEmpty()){
+            showErrorMessage(errorMessage, managementErrorMessage);
+            return;
+        }
+
         ManagementStaff managementDetails = new ManagementStaff(
                 managementStaffFullname.getText(),
                 managementStaffAddress.getText(),
                 Long.parseLong(managementStaffPhone.getText()),
                 managementStaffEmail.getText(),
                 managementStaffUsername.getText(),
-                managementStaffPassword.getText(),
+                HashingUtil.generateHash(managementStaffPassword.getText()),
                 String.valueOf(Constants.noOfEntries),
                 managementStaffManagementLevel.getValue(),
                 managementStaffBranch.getValue()
@@ -131,5 +135,10 @@ public class ManagementRegistrationController implements Initializable {
         managementStaffPassword.clear();
         managementStaffManagementLevel.setValue(null);
         managementStaffBranch.setValue(null);
+    }
+
+    private static void showErrorMessage(String message, Label label){
+        System.err.println(message);
+        label.setText(message);
     }
 }
