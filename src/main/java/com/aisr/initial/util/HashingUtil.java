@@ -18,10 +18,7 @@ public class HashingUtil {
     }
 
     public static boolean verifyHash(String password, String hash) {
-        System.out.println(" hash : "+ hash);
         String passwordHash = generateHash(password);
-        System.out.println(" passwordHash : "+ passwordHash);
-
         return hash.equals(passwordHash);
     }
 

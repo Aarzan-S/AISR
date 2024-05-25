@@ -5,6 +5,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.control.Label?>
 <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.aisr.initial.controller.AdminController">
     <children>
@@ -14,6 +15,12 @@
                 <Font name="System Bold" size="14.0"/>
             </font>
         </Text>
+        <Label fx:id="welcomeLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="166.0" layoutY="41.0"
+               prefHeight="33.0" prefWidth="287.0">
+            <font>
+                <Font size="17.0"/>
+            </font>
+        </Label>
         <Button fx:id="regRecruit" layoutX="215.0" layoutY="164.0" mnemonicParsing="false" onAction="#regRecruit"
                 onMouseClicked="#regRecruit" prefHeight="25.0" prefWidth="170.0" text="Add recruits"/>
 

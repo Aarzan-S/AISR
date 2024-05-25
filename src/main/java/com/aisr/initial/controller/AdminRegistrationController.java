@@ -68,7 +68,7 @@ public class AdminRegistrationController implements Initializable {
             return;
         }
         String errorMessage = FileUtil.checkForDuplicates(adminStaffPhone.getText().trim(),
-                adminStaffEmail.getText().trim(), adminStaffUsername.getText().trim());
+                adminStaffEmail.getText().trim(), adminStaffUsername.getText().trim(), Constants.STAFF_CSV_FILE);
         if (!errorMessage.isEmpty()){
             showErrorMessage(errorMessage, adminErrorMessage);
             return;

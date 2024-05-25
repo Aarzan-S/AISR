@@ -75,7 +75,8 @@ public class ManagementRegistrationController implements Initializable {
             return;
         }
         String errorMessage = FileUtil.checkForDuplicates(managementStaffPhone.getText().trim(),
-                managementStaffEmail.getText().trim(), managementStaffUsername.getText().trim());
+                managementStaffEmail.getText().trim(), managementStaffUsername.getText().trim(),
+                Constants.STAFF_CSV_FILE);
         if (!errorMessage.isEmpty()){
             showErrorMessage(errorMessage, managementErrorMessage);
             return;

@@ -30,6 +30,7 @@ public class NavigationHelper {
     }
 
     public static void navigate(ActionEvent event, String userRole, String userName) {
+        System.out.println("userRole : "+ userRole + " userName : "+ userName);
         try {
             switch (userRole) {
                 case "Staff" -> {
@@ -88,8 +89,9 @@ public class NavigationHelper {
         try {
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("view/ViewRecruit.fxml"));
             Parent staffPage = loader.load();
-            RecruitRegistrationController registrationController = loader.getController();
-            registrationController.setUserInfo(userName, userRole);
+            ViewRecruitController viewController = loader.getController();
+            viewController.setUserInfo(userName, userRole);
+            viewController.init();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(staffPage));
             stage.show();

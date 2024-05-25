@@ -66,14 +66,19 @@ public class RecruitRegistrationController implements Initializable {
     @FXML
     private void addAnotherRecruit() {
         if (!Validator.validatePhoneNumber(recruitPhone.getText())) {
-            System.err.println("Phone Number is not valid.");
-            recruitErrorMessage.setText("Phone Number is not valid.");
+            showErrorMessage("Phone Number is not valid.", recruitErrorMessage);
             return;
         } else if (!Validator.validateEmail(recruitEmail.getText())) {
-            System.err.println("Email is not valid.");
-            recruitErrorMessage.setText("Email is not valid.");
+            showErrorMessage("Email is not valid.", recruitErrorMessage);
             return;
         }
+        String errorMessage = FileUtil.checkForDuplicates(recruitPhone.getText(), recruitEmail.getText(),
+                recruitUsername.getText(), Constants.RECRUIT_CSV_FILE);
+        if (!errorMessage.isEmpty()) {
+            showErrorMessage(errorMessage, recruitErrorMessage);
+            return;
+        }
+
         Recruit recruitData = new Recruit(recruitFullname.getText(),
                 recruitAddress.getText(),
                 recruitPhone.getText(),
@@ -129,6 +134,11 @@ public class RecruitRegistrationController implements Initializable {
         recruitPassword.clear();
         recruitInterviewDate.setValue(null);
         recruitQualificationLevel.setValue(null);
+    }
+
+    private static void showErrorMessage(String message, Label label) {
+        System.err.println(message);
+        label.setText(message);
     }
 
 }

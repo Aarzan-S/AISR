@@ -7,4 +7,7 @@ module com.aisr.initial {
     exports com.aisr.initial;
     exports com.aisr.initial.controller;
     opens com.aisr.initial.controller to javafx.fxml;
+    exports com.aisr.initial.model;
+    opens com.aisr.initial.model to javafx.fxml;
+
 }

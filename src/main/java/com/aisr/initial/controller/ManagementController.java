@@ -33,7 +33,7 @@ public class ManagementController implements Initializable {
 
     @FXML
     private void viewRecruitDetails(ActionEvent event) {
-        NavigationHelper.navigateToRecruit(event, userRole, userName);
+        NavigationHelper.navigateToViewRecruit(event, userRole, userName);
     }
 
     @FXML

@@ -38,7 +38,7 @@ public class AdminController implements Initializable {
 
     @FXML
     private void viewRecruitDetails(ActionEvent event) {
-        // have  to add recruits details page
+        NavigationHelper.navigateToViewRecruit(event, userRole, userName);
     }
 
     @FXML
