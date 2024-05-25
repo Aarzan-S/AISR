@@ -43,12 +43,6 @@ public class LoginController implements Initializable {
         if (!userRole.equals("")){
             isPresent = true;
         }
-//        if (userRole.equals("Staff")) {
-//            Constants.noOfEntries = FileUtil.countNoOfRecords("staff.csv");
-//            if (Constants.noOfEntries < 0){
-//                err.setText("File not present.");
-//            }
-//        }
         if (isPresent) {
             NavigationHelper.navigate(event, userRole, loginUserName.getText().trim());
         } else {

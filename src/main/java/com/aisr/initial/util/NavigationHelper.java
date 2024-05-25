@@ -1,7 +1,7 @@
 package com.aisr.initial.util;
 
 import com.aisr.initial.Main;
-import com.aisr.initial.controller.StaffController;
+import com.aisr.initial.controller.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -32,7 +32,7 @@ public class NavigationHelper {
     public static void navigate(ActionEvent event, String userRole, String userName) {
         try {
             switch (userRole) {
-                case "Staff":
+                case "Staff" -> {
                     FXMLLoader loader = new FXMLLoader(Main.class.getResource("view/Staff.fxml"));
                     Parent staffPage = loader.load();
                     StaffController staffController = loader.getController();
@@ -42,14 +42,37 @@ public class NavigationHelper {
                     stage.setTitle("AIS-R".concat(" Staff Page"));
                     stage.setScene(new Scene(staffPage));
                     stage.show();
-                    break;
-                case "Management":
-
-                    break;
-                case "Admin":
-
-                    break;
+                }
+                case "Management" -> {
+                }
+                case "Admin" -> {
+                    FXMLLoader loader = new FXMLLoader(Main.class.getResource("view/Admin.fxml"));
+                    Parent staffPage = loader.load();
+                    AdminController adminController = loader.getController();
+                    adminController.setUserInfo(userName, userRole);
+                    adminController.setWelcomeMessage();
+                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    stage.setTitle("AIS-R".concat(" Admin Page"));
+                    stage.setScene(new Scene(staffPage));
+                    stage.show();
+                }
             }
+        } catch (IOException e) {
+            System.out.println("Could not find resource");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void navigateToRecruit(ActionEvent event, String userRole, String userName) {
+        try {
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource("view/RecruitRegistration.fxml"));
+            Parent staffPage = loader.load();
+            RecruitRegistrationController registrationController = loader.getController();
+            registrationController.setUserInfo(userName, userRole);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("AIS-R".concat(" Recruit Registration Page"));
+            stage.setScene(new Scene(staffPage));
+            stage.show();
         } catch (IOException e) {
             System.out.println("Could not find resource");
             throw new RuntimeException(e);
