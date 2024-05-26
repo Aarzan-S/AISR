@@ -2,6 +2,9 @@ package com.aisr.initial.controller;
 
 import com.aisr.initial.model.ManagementStaff;
 import com.aisr.initial.util.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,10 +12,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.util.Duration;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,21 +45,33 @@ public class ManagementRegistrationController implements Initializable {
     private Label managementSuccessMessage;
     @FXML
     private Button addManagementBtn;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         messageLabel.setText("Management Registration Page");
         managementStaffManagementLevel.getItems().addAll("Senior Manager", "Mid-level Manager", "Supervisor");
         managementStaffBranch.getItems().addAll("Brisbane", "Adelaide", "Sydney", "Melbourne");
         managementStaffPhone.setTextFormatter(new NumberFieldValidator());
+        addManagementBtn.disableProperty().bind(
+                Bindings.isEmpty(managementStaffFullname.textProperty())
+                        .or(Bindings.isEmpty(managementStaffAddress.textProperty()))
+                        .or(Bindings.isEmpty(managementStaffPhone.textProperty()))
+                        .or(Bindings.isEmpty(managementStaffEmail.textProperty()))
+                        .or(Bindings.isEmpty(managementStaffUsername.textProperty()))
+                        .or(Bindings.isEmpty(managementStaffPassword.textProperty()))
+                        .or(Bindings.isNull(managementStaffManagementLevel.valueProperty()))
+                        .or(Bindings.isNull(managementStaffBranch.valueProperty()))
+        );
     }
 
     @FXML
     void goBack(ActionEvent event) {
-        NavigationHelper.navigate(event,"view/Staff.fxml");
+        NavigationHelper.navigate(event, "view/Staff.fxml");
     }
 
     @FXML
     private void addManagementDetails() {
+        if (validateWhiteSpace()) return;
         if (managementStaffFullname.getText().trim().equalsIgnoreCase("admin")
                 || managementStaffFullname.getText().trim().equalsIgnoreCase("superadmin")) {
             System.err.println("Username cannot be admin/superadmin");
@@ -77,7 +90,7 @@ public class ManagementRegistrationController implements Initializable {
         String errorMessage = FileUtil.checkForDuplicates(managementStaffPhone.getText().trim(),
                 managementStaffEmail.getText().trim(), managementStaffUsername.getText().trim(),
                 Constants.STAFF_CSV_FILE);
-        if (!errorMessage.isEmpty()){
+        if (!errorMessage.isEmpty()) {
             showErrorMessage(errorMessage, managementErrorMessage);
             return;
         }
@@ -94,36 +107,20 @@ public class ManagementRegistrationController implements Initializable {
                 managementStaffBranch.getValue()
         );
         managementList.add(managementDetails);
-        managementSuccessMessage.setText("Management details are added. Please register to persist.");
+        showMessage();
         clearInputFields();
     }
+
     @FXML
-    private void registerManagementStaff(ActionEvent event) throws IOException {
+    private void registerManagementStaff(ActionEvent event) throws Exception {
         if (managementList.isEmpty()) {
             managementSuccessMessage.setText("There are no management entries.");
             return;
         }
-        File file = new File(Constants.STAFF_CSV_FILE);
-        if (!file.exists()) {
-            file.createNewFile();
-            FileWriter writer = new FileWriter(Constants.STAFF_CSV_FILE, true);
-            writer.append("Role,Full Name,Address,Phone Number,Email,Username,Password,Staff ID,Position Type," +
-                    "Management Level,Branch\n");
-            writer.close();
-        }
-        try (FileWriter writer = new FileWriter(Constants.STAFF_CSV_FILE, true)) {
-            for (ManagementStaff managementData : managementList) {
-                writer.append(managementData.toString()).append("\n");
-                Constants.noOfEntries++;
-            }
-
-        } catch (IOException e) {
-            System.err.println("Error writing to CSV file: " + e.getMessage());
-        }
+        FileUtil.addStaffData(Constants.STAFF_CSV_FILE, managementList);
         clearInputFields();
         managementSuccessMessage.setText("Management data saved successfully");
         System.out.println("Management data saved successfully.");
-
     }
 
     public void clearInputFields() {
@@ -138,8 +135,30 @@ public class ManagementRegistrationController implements Initializable {
         managementStaffBranch.setValue(null);
     }
 
-    private static void showErrorMessage(String message, Label label){
+    private boolean validateWhiteSpace() {
+        if (managementStaffFullname.getText().isBlank() ||
+                managementStaffAddress.getText().isBlank() ||
+                managementStaffPhone.getText().isBlank() ||
+                managementStaffEmail.getText().isBlank() ||
+                managementStaffUsername.getText().isBlank() ||
+                managementStaffPassword.getText().isBlank() ||
+                managementStaffManagementLevel.getValue() == null ||
+                managementStaffBranch.getValue() == null) {
+            managementErrorMessage.setText("Please enter all fields.");
+            return true;
+        }
+        return false;
+    }
+
+    private static void showErrorMessage(String message, Label label) {
         System.err.println(message);
         label.setText(message);
+    }
+
+    private void showMessage() {
+        managementSuccessMessage.setText("Management details added. Please Save to persist the data.");
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), event -> managementSuccessMessage.setText("")));
+        timeline.setCycleCount(1);
+        timeline.play();
     }
 }

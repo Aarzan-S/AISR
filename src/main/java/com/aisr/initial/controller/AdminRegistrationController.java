@@ -2,24 +2,27 @@ package com.aisr.initial.controller;
 
 import com.aisr.initial.model.AdminStaff;
 import com.aisr.initial.util.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.util.Duration;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class AdminRegistrationController implements Initializable {
-    private static final String STAFF_CSV = "staff.csv";
+    private List<AdminStaff> adminList = new ArrayList<>();
     @FXML
     private Label headerLabel;
-    private List<AdminStaff> adminList = new ArrayList<>();
     @FXML
     private TextField adminStaffFullName;
     @FXML
@@ -46,17 +49,28 @@ public class AdminRegistrationController implements Initializable {
         headerLabel.setText("Admin Registration Page");
         adminStaffPositionType.getItems().addAll("Full-time", "Part-time", "Volunteer");
         adminStaffPhone.setTextFormatter(new NumberFieldValidator());
+        addAdminBtn.disableProperty().bind(
+                Bindings.isEmpty(adminStaffFullName.textProperty())
+                        .or(Bindings.isEmpty(adminStaffAddress.textProperty()))
+                        .or(Bindings.isEmpty(adminStaffPhone.textProperty()))
+                        .or(Bindings.isEmpty(adminStaffEmail.textProperty()))
+                        .or(Bindings.isEmpty(adminStaffUsername.textProperty()))
+                        .or(Bindings.isEmpty(adminStaffPassword.textProperty()))
+                        .or(Bindings.isNull(adminStaffPositionType.valueProperty()))
+
+        );
     }
 
     @FXML
     void goBack(ActionEvent event) {
-        NavigationHelper.navigate(event, "view/Staff.fxml");
+        NavigationHelper.navigate(event, Constants.STAFF_PAGE);
     }
 
     @FXML
     private void addAdminDetails() {
-        if (adminStaffFullName.getText().trim().equalsIgnoreCase("admin")
-                || adminStaffFullName.getText().trim().equalsIgnoreCase("superadmin")) {
+        if (validateWhiteSpace()) return;
+        if (adminStaffUsername.getText().trim().equalsIgnoreCase("admin")
+                || adminStaffUsername.getText().trim().equalsIgnoreCase("superadmin")) {
             showErrorMessage("Username cannot be admin/superadmin", adminErrorMessage);
             return;
         }
@@ -69,7 +83,7 @@ public class AdminRegistrationController implements Initializable {
         }
         String errorMessage = FileUtil.checkForDuplicates(adminStaffPhone.getText().trim(),
                 adminStaffEmail.getText().trim(), adminStaffUsername.getText().trim(), Constants.STAFF_CSV_FILE);
-        if (!errorMessage.isEmpty()){
+        if (!errorMessage.isEmpty()) {
             showErrorMessage(errorMessage, adminErrorMessage);
             return;
         }
@@ -83,32 +97,17 @@ public class AdminRegistrationController implements Initializable {
                 , adminStaffPositionType.getValue().trim()
         );
         adminList.add(adminDetails);
-        adminSuccessMessage.setText("Admin details are added. Please register to persist.");
+        showMessage();
         clearInputFields();
     }
 
     @FXML
-    void registerAdminStaff() throws IOException {
+    void registerAdminStaff() throws Exception {
         if (adminList.isEmpty()) {
             adminErrorMessage.setText("There are no admin entries.");
             return;
         }
-        File file = new File(STAFF_CSV);
-        if (!file.exists()) {
-            file.createNewFile();
-            FileWriter writer = new FileWriter(STAFF_CSV, true);
-            writer.append("Role, Full Name, Address, Phone Number, Email, Username, Password, Staff ID, Position Type," +
-                    " Management Level, Branch\n");
-            writer.close();
-        }
-        try (FileWriter writer = new FileWriter(STAFF_CSV, true)) {
-            for (AdminStaff adminData : adminList) {
-                writer.append(adminData.toString()).append("\n");
-                Constants.noOfEntries++;
-            }
-        } catch (IOException e) {
-            System.err.println("Error writing to Staff CSV file: " + e.getMessage());
-        }
+        FileUtil.addStaffData(Constants.STAFF_CSV_FILE, adminList);
         this.clearInputFields();
         adminSuccessMessage.setText("Admin data saved successfully");
         System.out.println("Admin data saved successfully.");
@@ -124,9 +123,31 @@ public class AdminRegistrationController implements Initializable {
         adminStaffPassword.clear();
         adminStaffPositionType.setValue(null);
     }
-    private static void showErrorMessage(String message, Label label){
+
+    private boolean validateWhiteSpace() {
+        if (adminStaffFullName.getText().isBlank()
+                || adminStaffAddress.getText().isBlank()
+                || adminStaffPhone.getText().isBlank()
+                || adminStaffEmail.getText().isBlank()
+                || adminStaffUsername.getText().isBlank()
+                || adminStaffPassword.getText().isBlank()
+                || adminStaffPositionType.getValue() == null) {
+            adminErrorMessage.setText("Please enter all fields.");
+            return true;
+        }
+        return false;
+    }
+
+    private static void showErrorMessage(String message, Label label) {
         System.err.println(message);
         label.setText(message);
+    }
+
+    private void showMessage() {
+        adminSuccessMessage.setText("Admin details added. Please click Save to persist the data.");
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), event -> adminSuccessMessage.setText("")));
+        timeline.setCycleCount(1);
+        timeline.play();
     }
 
 }

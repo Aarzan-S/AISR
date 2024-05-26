@@ -32,6 +32,7 @@ public class ViewRecruitController implements Initializable {
         this.userName = userName;
         this.userRole = userRole;
     }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
     }
@@ -77,25 +78,22 @@ public class ViewRecruitController implements Initializable {
         departmentColumn.setCellValueFactory(new PropertyValueFactory<>("department"));
         departmentColumn.setPrefWidth(100);
         departmentColumn.setCellFactory(column -> new ComboBoxCell(FXCollections.observableArrayList("None",
-                "Software", "Aerospace", "Mechanical", "Electronics")));
+                "Software", "Aerospace", "Mechanical", "Electronics"), "department"));
         departmentColumn.setEditable(!userRole.equals("Admin"));
 
         TableColumn<Recruit, String> locationColumn = new TableColumn<>("Location");
         locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
         locationColumn.setPrefWidth(100);
         locationColumn.setCellFactory(col -> new ComboBoxCell(FXCollections.observableArrayList("None", "Brisbane",
-                "Adelaide", "Sydney", "Melbourne")));
-        locationColumn.setEditable(!userRole.equals("Admin"));
+                "Adelaide", "Sydney", "Melbourne"),"location"));
+        locationColumn.setEditable(false);
 
         TableColumn<Recruit, Void> buttonColumn = new TableColumn<>("Action");
         buttonColumn.setPrefWidth(100);
         buttonColumn.setSortable(false);
-        buttonColumn.setEditable(!userRole.equals("Admin"));
-        buttonColumn.setCellFactory(param -> new ButtonCell());
-
+        buttonColumn.setCellFactory(param -> new ButtonCell(userRole));
         tableView.getColumns().addAll(nameColumn, addressColumn, phoneNumberColumn, emailColumn, usernameColumn,
-                passwordColumn, interviewDateColumn, highestQualificationColumn, departmentColumn, locationColumn,
-                buttonColumn);
+                passwordColumn, interviewDateColumn, highestQualificationColumn, departmentColumn, locationColumn, buttonColumn);
     }
 
     public void onRefresh(ActionEvent actionEvent) {
@@ -116,12 +114,16 @@ public class ViewRecruitController implements Initializable {
 
     private class ComboBoxCell extends TableCell<Recruit, String> {
         private final ComboBox<String> comboBox;
-        public ComboBoxCell(ObservableList<String> items) {
+
+        public ComboBoxCell(ObservableList<String> items, String columnName) {
             this.comboBox = new ComboBox<>(items);
             comboBox.setOnAction(event -> {
                 Recruit recruit = getTableRow().getItem();
                 if (recruit != null) {
-                    recruit.setLocation(comboBox.getValue());
+                    if (columnName.equals("department"))
+                        recruit.setDepartment(comboBox.getValue());
+                    else
+                        recruit.setLocation(comboBox.getValue());
                 }
             });
         }
@@ -141,9 +143,11 @@ public class ViewRecruitController implements Initializable {
 
     private class ButtonCell extends TableCell<Recruit, Void> {
         private final Button updateButton;
+        private final String userRole;
 
-        public ButtonCell() {
+        public ButtonCell(String userRole) {
             updateButton = new Button("Update");
+            this.userRole = userRole;
             updateButton.setOnAction(event -> {
                 Recruit recruit = getTableView().getItems().get(getIndex());
                 updateCSV(recruit, getIndex() + 1);
@@ -153,9 +157,10 @@ public class ViewRecruitController implements Initializable {
         @Override
         protected void updateItem(Void item, boolean empty) {
             super.updateItem(item, empty);
-            if (empty)  {
+            if (empty) {
                 setGraphic(null);
             } else {
+                updateButton.setDisable(userRole.equals("Admin"));
                 setGraphic(updateButton);
             }
         }

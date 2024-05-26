@@ -1,8 +1,10 @@
 package com.aisr.initial.util;
 
 import com.aisr.initial.model.Recruit;
+import com.aisr.initial.model.Staff;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,25 +44,25 @@ public class FileUtil {
         return "";
     }
 
-    public static List<Recruit> fetchRecruitDetails(){
+    public static List<Recruit> fetchRecruitDetails() {
         List<Recruit> recruitList = new ArrayList<>();
-        if (doesFileExists(Constants.RECRUIT_CSV_FILE)){
+        if (doesFileExists(Constants.RECRUIT_CSV_FILE)) {
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(Constants.RECRUIT_CSV_FILE))) {
                 recruitList = bufferedReader.lines().skip(1).map(data -> {
                     String[] recruitDetails = data.split(",");
                     return new Recruit(
                             recruitDetails[0],
                             recruitDetails[1],
-                            recruitDetails[2],
+                            Long.parseLong(recruitDetails[2]),
                             recruitDetails[3],
                             recruitDetails[4],
                             recruitDetails[5],
-                            recruitDetails[6],
+                            LocalDate.parse(recruitDetails[6]),
                             recruitDetails[7],
                             recruitDetails[8],
                             recruitDetails[9],
                             recruitDetails[10],
-                            recruitDetails[11]
+                            LocalDate.parse(recruitDetails[11])
                     );
                 }).collect(Collectors.toList());
             } catch (IOException e) {
@@ -72,6 +74,7 @@ public class FileUtil {
     }
 
     public static void updateCSV(Recruit recruit, int index) {
+        System.out.println("recruit : "+ recruit.toString());
         try (BufferedReader reader = new BufferedReader(new FileReader(Constants.RECRUIT_CSV_FILE))) {
             String line;
             StringBuilder content = new StringBuilder();
@@ -89,6 +92,45 @@ public class FileUtil {
             writer.close();
         } catch (IOException e) {
             System.out.println("Could not update recruit details");
+        }
+    }
+
+    public static void addStaffData(String fileName, List<? extends Staff> staffList) throws Exception {
+        if (!doesFileExists(fileName)) {
+            new File(fileName).createNewFile();
+            FileWriter writer = new FileWriter(fileName, true);
+            writer.append(fileName.equals(Constants.STAFF_CSV_FILE) ? Constants.STAFF_CSV_HEADER : Constants.RECRUIT_CSV_HEADER);
+            writer.append("\n");
+            writer.close();
+        }
+        try (FileWriter writer = new FileWriter(fileName, true)) {
+            for (Staff staff : staffList) {
+                System.out.println(staff.toString());
+                writer.append(staff.toString()).append("\n");
+                Constants.noOfEntries++;
+            }
+        } catch (IOException e) {
+            System.err.println("Could not write Staff data: " + e.getMessage());
+            throw new Exception("Could not write Staff data: " + e.getMessage());
+        }
+    }
+
+    public static void addRecruitData(List<Recruit> recruitList) throws Exception {
+        if (!doesFileExists(Constants.RECRUIT_CSV_FILE)) {
+            new File(Constants.RECRUIT_CSV_FILE).createNewFile();
+            FileWriter writer = new FileWriter(Constants.RECRUIT_CSV_FILE, true);
+            writer.append(Constants.RECRUIT_CSV_HEADER);
+            writer.append("\n");
+            writer.close();
+        }
+        try (FileWriter writer = new FileWriter(Constants.RECRUIT_CSV_FILE, true)) {
+            for (Recruit recruitData : recruitList) {
+                writer.append(recruitData.toString());
+                writer.append("\n");
+            }
+        } catch (IOException e) {
+            System.err.println("Could not write Recruit data: " + e.getMessage());
+            throw new Exception("Could not write Recruit data: " + e.getMessage());
         }
     }
 }

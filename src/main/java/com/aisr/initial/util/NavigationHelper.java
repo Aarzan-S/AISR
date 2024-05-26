@@ -13,12 +13,13 @@ import java.io.IOException;
 
 /*
     This class will be useful to change scenes as we
-    progress through different logics
+    progress through different pages
  */
 public class NavigationHelper {
     public static void navigate(ActionEvent event, String sceneName) {
         try {
-            Parent loginPage = FXMLLoader.load(Main.class.getResource(sceneName));
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource(sceneName));
+            Parent loginPage = loader.load();
             Scene scene = new Scene(loginPage);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
@@ -30,7 +31,6 @@ public class NavigationHelper {
     }
 
     public static void navigate(ActionEvent event, String userRole, String userName) {
-        System.out.println("userRole : "+ userRole + " userName : "+ userName);
         try {
             switch (userRole) {
                 case "Staff" -> {

@@ -5,23 +5,23 @@ import java.time.LocalDate;
 public class Recruit {
     private String fullName;
     private String address;
-    private String phoneNumber;
+    private Long phoneNumber;
     private String email;
     private String username;
     private String password;
-    private String interviewDate;
+    private LocalDate interviewDate;
     private String highestQualification;
     private String department;
     private String location;
     private String recruitedBy;
-    private String recruitedOn;
+    private LocalDate recruitedOn;
 
     public Recruit() {
     }
 
-    public Recruit(String fullName, String address, String phoneNumber, String email,
-                   String username, String password, String interviewDate, String highestQualification, String department,
-                   String location, String recruitedBy, String recruitedOn) {
+    public Recruit(String fullName, String address, Long phoneNumber, String email,
+                   String username, String password, LocalDate interviewDate, String highestQualification, String department,
+                   String location, String recruitedBy, LocalDate recruitedOn) {
         this.fullName = fullName;
         this.address = address;
         this.phoneNumber = phoneNumber;
@@ -45,7 +45,7 @@ public class Recruit {
         return address;
     }
 
-    public String getPhoneNumber() {
+    public Long getPhoneNumber() {
         return phoneNumber;
     }
 
@@ -61,7 +61,7 @@ public class Recruit {
         return password;
     }
 
-    public String getInterviewDate() {
+    public LocalDate getInterviewDate() {
         return interviewDate;
     }
 
@@ -81,7 +81,7 @@ public class Recruit {
         return recruitedBy;
     }
 
-    public String getRecruitedOn() {
+    public LocalDate getRecruitedOn() {
         return recruitedOn;
     }
 
@@ -94,7 +94,7 @@ public class Recruit {
         this.address = address;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+    public void setPhoneNumber(Long phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -110,7 +110,7 @@ public class Recruit {
         this.password = password;
     }
 
-    public void setInterviewDate(String interviewDate) {
+    public void setInterviewDate(LocalDate interviewDate) {
         this.interviewDate = interviewDate;
     }
 
@@ -130,14 +130,14 @@ public class Recruit {
         this.recruitedBy = recruitedBy;
     }
 
-    public void setRecruitedOn(String recruitedOn) {
+    public void setRecruitedOn(LocalDate recruitedOn) {
         this.recruitedOn = recruitedOn;
     }
 
     @Override
     public String toString() {
-        return String.join(",", getFullName(), getAddress(), getPhoneNumber(),
-                getEmail(), getUsername(), getPassword(), getInterviewDate(),
-                getHighestQualification(), getDepartment(), getLocation(), getRecruitedBy(), getRecruitedOn());
+        return String.join(",", getFullName(), getAddress(), getPhoneNumber().toString(),
+                getEmail(), getUsername(), getPassword(), getInterviewDate().toString(),
+                getHighestQualification(), getDepartment(), getLocation(), getRecruitedBy(), getRecruitedOn().toString());
     }
 }
