@@ -7,7 +7,6 @@ import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -19,7 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class AdminRegistrationController implements Initializable {
+public class AdminRegistrationController implements Controller {
+    private String userName;
+
+    private String userRole;
     private List<AdminStaff> adminList = new ArrayList<>();
     @FXML
     private Label headerLabel;
@@ -45,6 +47,12 @@ public class AdminRegistrationController implements Initializable {
     private Button addAdminBtn;
 
     @Override
+    public void setUp(String userName, String userRole) {
+        this.userName = userName;
+        this.userRole = userRole;
+    }
+
+    @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         headerLabel.setText("Admin Registration Page");
         adminStaffPositionType.getItems().addAll("Full-time", "Part-time", "Volunteer");
@@ -63,17 +71,12 @@ public class AdminRegistrationController implements Initializable {
 
     @FXML
     void goBack(ActionEvent event) {
-        NavigationHelper.navigate(event, Constants.STAFF_PAGE);
+        NavigationHelper.navigate("view/" + Constants.STAFF_PAGE, userName, userRole);
     }
 
     @FXML
     private void addAdminDetails() {
         if (validateWhiteSpace()) return;
-        if (adminStaffUsername.getText().trim().equalsIgnoreCase("admin")
-                || adminStaffUsername.getText().trim().equalsIgnoreCase("superadmin")) {
-            showErrorMessage("Username cannot be admin/superadmin", adminErrorMessage);
-            return;
-        }
         if (!Validator.validatePhoneNumber(adminStaffPhone.getText().trim())) {
             showErrorMessage("Phone Number is not valid.", adminErrorMessage);
             return;
@@ -81,7 +84,7 @@ public class AdminRegistrationController implements Initializable {
             showErrorMessage("Email is not valid.", adminErrorMessage);
             return;
         }
-        String errorMessage = FileUtil.checkForDuplicates(adminStaffPhone.getText().trim(),
+        String errorMessage = FileUtil.validateUniqueFields(adminStaffPhone.getText().trim(),
                 adminStaffEmail.getText().trim(), adminStaffUsername.getText().trim(), Constants.STAFF_CSV_FILE);
         if (!errorMessage.isEmpty()) {
             showErrorMessage(errorMessage, adminErrorMessage);
@@ -149,5 +152,4 @@ public class AdminRegistrationController implements Initializable {
         timeline.setCycleCount(1);
         timeline.play();
     }
-
 }

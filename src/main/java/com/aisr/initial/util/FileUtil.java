@@ -1,5 +1,6 @@
 package com.aisr.initial.util;
 
+import com.aisr.initial.exception.CustomException;
 import com.aisr.initial.model.Recruit;
 import com.aisr.initial.model.Staff;
 
@@ -25,13 +26,16 @@ public class FileUtil {
         }
     }
 
-    public static String checkForDuplicates(String phoneNumber, String emailAddress, String userName, String fileName) {
+    public static String validateUniqueFields(String phoneNumber, String emailAddress, String userName, String fileName) {
+        if (userName.toLowerCase().contains("admin")){
+            return "Username must not contain admin";
+        }
         List<String[]> rows;
         if (doesFileExists(fileName)) {
             try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
                 rows = br.lines().skip(1).map(row -> row.split(",")).collect(Collectors.toList());
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new CustomException("Could not read staff file : "+e.getMessage());
             }
             if (rows.stream().anyMatch(data -> phoneNumber.equals(data[3]))) {
                 return "Phone Number already used";
@@ -67,14 +71,37 @@ public class FileUtil {
                 }).collect(Collectors.toList());
             } catch (IOException e) {
                 System.err.println("Could not load recruit data.");
-                throw new RuntimeException(e);
+                throw new CustomException("Could not load recruit data : "+ e.getMessage());
+            }
+        }
+        return recruitList;
+    }
+
+    public static List<Recruit> fetchRecruitHistoryDetails() {
+        List<Recruit> recruitList = new ArrayList<>();
+        if (doesFileExists(Constants.RECRUIT_CSV_FILE)) {
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(Constants.RECRUIT_CSV_FILE))) {
+                recruitList = bufferedReader.lines().skip(1).map(data -> {
+                    String[] recruitDetails = data.split(",");
+                    return new Recruit(
+                            recruitDetails[0],
+                            Long.parseLong(recruitDetails[2]),
+                            recruitDetails[3],
+                            recruitDetails[4],
+                            recruitDetails[10],
+                            LocalDate.parse(recruitDetails[11])
+                    );
+                }).collect(Collectors.toList());
+            } catch (IOException e) {
+                System.err.println("Could not load recruit history data.");
+                throw new CustomException("Could not load recruit history data : "+e.getMessage());
             }
         }
         return recruitList;
     }
 
     public static void updateCSV(Recruit recruit, int index) {
-        System.out.println("recruit : "+ recruit.toString());
+        System.out.println("recruit : " + recruit.toString());
         try (BufferedReader reader = new BufferedReader(new FileReader(Constants.RECRUIT_CSV_FILE))) {
             String line;
             StringBuilder content = new StringBuilder();
@@ -105,13 +132,12 @@ public class FileUtil {
         }
         try (FileWriter writer = new FileWriter(fileName, true)) {
             for (Staff staff : staffList) {
-                System.out.println(staff.toString());
                 writer.append(staff.toString()).append("\n");
                 Constants.noOfEntries++;
             }
         } catch (IOException e) {
             System.err.println("Could not write Staff data: " + e.getMessage());
-            throw new Exception("Could not write Staff data: " + e.getMessage());
+            throw new CustomException("Could not write Staff data: " + e.getMessage());
         }
     }
 
@@ -130,7 +156,7 @@ public class FileUtil {
             }
         } catch (IOException e) {
             System.err.println("Could not write Recruit data: " + e.getMessage());
-            throw new Exception("Could not write Recruit data: " + e.getMessage());
+            throw new CustomException("Could not write Recruit data: " + e.getMessage());
         }
     }
 }

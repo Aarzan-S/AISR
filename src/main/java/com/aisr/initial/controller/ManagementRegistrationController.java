@@ -7,7 +7,6 @@ import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -19,10 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class ManagementRegistrationController implements Initializable {
+public class ManagementRegistrationController implements Controller {
+    private String userName;
+    private String userRole;
+    List<ManagementStaff> managementList = new ArrayList<>();
+
     @FXML
     private Label messageLabel;
-    List<ManagementStaff> managementList = new ArrayList<>();
     @FXML
     private TextField managementStaffFullname;
     @FXML
@@ -47,6 +49,12 @@ public class ManagementRegistrationController implements Initializable {
     private Button addManagementBtn;
 
     @Override
+    public void setUp(String userName, String userRole) {
+        this.userName = userName;
+        this.userRole = userRole;
+    }
+
+    @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         messageLabel.setText("Management Registration Page");
         managementStaffManagementLevel.getItems().addAll("Senior Manager", "Mid-level Manager", "Supervisor");
@@ -65,19 +73,13 @@ public class ManagementRegistrationController implements Initializable {
     }
 
     @FXML
-    void goBack(ActionEvent event) {
-        NavigationHelper.navigate(event, "view/Staff.fxml");
+    void goBack() {
+        NavigationHelper.navigate("view/" + Constants.STAFF_PAGE, userName, userRole);
     }
 
     @FXML
     private void addManagementDetails() {
         if (validateWhiteSpace()) return;
-        if (managementStaffFullname.getText().trim().equalsIgnoreCase("admin")
-                || managementStaffFullname.getText().trim().equalsIgnoreCase("superadmin")) {
-            System.err.println("Username cannot be admin/superadmin");
-            managementErrorMessage.setText("Username cannot be admin/superadmin");
-            return;
-        }
         if (!Validator.validatePhoneNumber(managementStaffPhone.getText().trim())) {
             System.err.println("Phone Number is not valid.");
             managementErrorMessage.setText("Phone Number is not valid.");
@@ -87,7 +89,7 @@ public class ManagementRegistrationController implements Initializable {
             managementErrorMessage.setText("Email is not valid.");
             return;
         }
-        String errorMessage = FileUtil.checkForDuplicates(managementStaffPhone.getText().trim(),
+        String errorMessage = FileUtil.validateUniqueFields(managementStaffPhone.getText().trim(),
                 managementStaffEmail.getText().trim(), managementStaffUsername.getText().trim(),
                 Constants.STAFF_CSV_FILE);
         if (!errorMessage.isEmpty()) {

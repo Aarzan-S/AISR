@@ -16,16 +16,18 @@
                 <Font name="System Bold" size="14.0"/>
             </font>
         </Text>
-        <Button layoutX="97.0" layoutY="188.0" mnemonicParsing="false" onAction="#showAdminRegistration"
-                prefHeight="25.0" prefWidth="150.0" text="Register Admin"/>
-        <Button layoutX="348.0" layoutY="188.0" mnemonicParsing="false" onAction="#showManagementRegistration"
-                text="Register Management"/>
-        <Button layoutX="475.0" layoutY="340.0" mnemonicParsing="false" onAction="#logOut" text="Logout"/>
-        <Label fx:id="welcomeText" alignment="CENTER" contentDisplay="CENTER" layoutX="144.0" layoutY="69.0"
-               prefHeight="25.0" prefWidth="312.0">
+        <Label fx:id="welcomeLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="105.0" layoutY="48.0"
+               prefHeight="25.0" prefWidth="382.0">
             <font>
-                <Font size="20.0"/>
+                <Font name="System Bold" size="15.0"/>
             </font>
         </Label>
+        <Button layoutX="206.0" layoutY="126.0" mnemonicParsing="false" onAction="#showAdminRegistration"
+                prefHeight="25.0" prefWidth="162.0" text="Register Admin"/>
+        <Button layoutX="206.0" layoutY="194.0" mnemonicParsing="false" onAction="#showManagementRegistration"
+                text="Register Management"/>
+        <Button layoutX="475.0" layoutY="340.0" mnemonicParsing="false" onAction="#logOut" text="Logout"/>
+        <Button layoutX="206.0" layoutY="256.0" mnemonicParsing="false" onAction="#showRecruitHistory" prefHeight="24.0"
+                prefWidth="162.0" text="Recruit History"/>
     </children>
 </AnchorPane>

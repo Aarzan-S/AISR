@@ -1,15 +1,15 @@
 package com.aisr.initial.controller;
 
+import com.aisr.initial.util.Constants;
 import com.aisr.initial.util.NavigationHelper;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class AdminController implements Initializable {
+public class AdminController implements Controller {
     private String userName;
 
     private String userRole;
@@ -17,13 +17,10 @@ public class AdminController implements Initializable {
     @FXML
     private Label welcomeLabel;
 
-
-    public void setUserInfo(String userName, String userRole) {
+    @Override
+    public void setUp(String userName, String userRole) {
         this.userName = userName;
         this.userRole = userRole;
-    }
-
-    public void setWelcomeMessage() {
         this.welcomeLabel.setText("Welcome, " + userName);
     }
 
@@ -32,17 +29,22 @@ public class AdminController implements Initializable {
     }
 
     @FXML
-    private void regRecruit(ActionEvent event) {
-        NavigationHelper.navigateToRecruit(event, userRole, userName);
+    private void regRecruit() {
+        NavigationHelper.navigate("view/" + Constants.RECRUIT_REGISTRATION_PAGE, userName, userRole);
     }
 
     @FXML
-    private void viewRecruitDetails(ActionEvent event) {
-        NavigationHelper.navigateToViewRecruit(event, userRole, userName);
+    private void viewRecruitDetails() {
+        NavigationHelper.navigate("view/" + Constants.VIEW_RECRUIT_PAGE, userName, userRole);
     }
 
     @FXML
-    private void logout(ActionEvent event) {
-        NavigationHelper.navigate(event, "view/Login.fxml");
+    private void showRecruitHistory() {
+        NavigationHelper.navigate("view/" + Constants.RECRUIT_HISTORY, userName, userRole);
+    }
+
+    @FXML
+    private void logout() {
+        NavigationHelper.navigate("view/" + Constants.LOGIN_PAGE, "", "");
     }
 }

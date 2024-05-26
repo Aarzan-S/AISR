@@ -36,6 +36,16 @@ public class Recruit {
         this.recruitedOn = recruitedOn;
     }
 
+    public Recruit(String fullName, Long phoneNumber, String email, String username, String recruitedBy,
+                   LocalDate recruitedOn) {
+        this.fullName = fullName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.username = username;
+        this.recruitedBy = recruitedBy;
+        this.recruitedOn = recruitedOn;
+    }
+
     // Getter methods
     public String getFullName() {
         return fullName;

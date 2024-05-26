@@ -1,10 +1,9 @@
 package com.aisr.initial.util;
 
 import com.aisr.initial.Main;
-import com.aisr.initial.controller.*;
-import javafx.event.ActionEvent;
+import com.aisr.initial.controller.Controller;
+import com.aisr.initial.exception.CustomException;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -16,88 +15,31 @@ import java.io.IOException;
     progress through different pages
  */
 public class NavigationHelper {
-    public static void navigate(ActionEvent event, String sceneName) {
-        try {
-            FXMLLoader loader = new FXMLLoader(Main.class.getResource(sceneName));
-            Parent loginPage = loader.load();
-            Scene scene = new Scene(loginPage);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            System.out.println("Could not find resource");
-            throw new RuntimeException(e);
-        }
+    private static NavigationHelper instance;
+    private static Stage primaryStage;
+
+    private NavigationHelper() {
     }
 
-    public static void navigate(ActionEvent event, String userRole, String userName) {
-        try {
-            switch (userRole) {
-                case "Staff" -> {
-                    FXMLLoader loader = new FXMLLoader(Main.class.getResource("view/Staff.fxml"));
-                    Parent staffPage = loader.load();
-                    StaffController staffController = loader.getController();
-                    staffController.setUserInfo(userName, userRole);
-                    staffController.setWelcomeMessage();
-                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    stage.setScene(new Scene(staffPage));
-                    stage.show();
-                }
-                case "Management" -> {
-                    FXMLLoader loader = new FXMLLoader(Main.class.getResource("view/Management.fxml"));
-                    Parent staffPage = loader.load();
-                    ManagementController mngtController = loader.getController();
-                    mngtController.setUserInfo(userName, userRole);
-                    mngtController.setWelcomeMessage();
-                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    stage.setScene(new Scene(staffPage));
-                    stage.show();
-                }
-                case "Admin" -> {
-                    FXMLLoader loader = new FXMLLoader(Main.class.getResource("view/Admin.fxml"));
-                    Parent staffPage = loader.load();
-                    AdminController adminController = loader.getController();
-                    adminController.setUserInfo(userName, userRole);
-                    adminController.setWelcomeMessage();
-                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    stage.setScene(new Scene(staffPage));
-                    stage.show();
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Could not find resource");
-            throw new RuntimeException(e);
-        }
+    public static void setPrimaryStage(Stage stage) {
+        primaryStage = stage;
     }
 
-    public static void navigateToRecruit(ActionEvent event, String userRole, String userName) {
+    public static void navigate(String fxmlPath, String userName, String userRole) {
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource(fxmlPath));
+        Parent root;
         try {
-            FXMLLoader loader = new FXMLLoader(Main.class.getResource("view/RecruitRegistration.fxml"));
-            Parent staffPage = loader.load();
-            RecruitRegistrationController registrationController = loader.getController();
-            registrationController.setUserInfo(userName, userRole);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(staffPage));
-            stage.show();
+            root = loader.load();
         } catch (IOException e) {
-            System.out.println("Could not find resource");
-            throw new RuntimeException(e);
+            System.out.println("Could not load fxml file");
+            throw new CustomException("Could not load fxml file : "+e.getMessage());
         }
-    }
-
-    public static void navigateToViewRecruit(ActionEvent event, String userRole, String userName) {
-        try {
-            FXMLLoader loader = new FXMLLoader(Main.class.getResource("view/ViewRecruit.fxml"));
-            Parent staffPage = loader.load();
-            ViewRecruitController viewController = loader.getController();
-            viewController.setUserInfo(userName, userRole);
-            viewController.init();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(staffPage));
-            stage.show();
-        } catch (IOException e) {
-            System.out.println("Could not find resource");
-            throw new RuntimeException(e);
+        Scene scene = new Scene(root);
+        primaryStage.setScene(scene);
+        Controller controller = loader.getController();
+        if (controller != null) {
+            controller.setUp(userName, userRole);
         }
+        primaryStage.show();
     }
 }

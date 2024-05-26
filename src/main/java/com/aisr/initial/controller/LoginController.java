@@ -5,9 +5,7 @@ import com.aisr.initial.util.FileUtil;
 import com.aisr.initial.util.HashingUtil;
 import com.aisr.initial.util.NavigationHelper;
 import javafx.beans.binding.Bindings;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -18,7 +16,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class LoginController implements Initializable {
+public class LoginController implements Controller {
     @FXML
     private TextField loginUserName;
     @FXML
@@ -29,6 +27,10 @@ public class LoginController implements Initializable {
     private Button loginBtn;
 
     @Override
+    public void setUp(String userName, String userRole) {
+    }
+
+    @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loginBtn.disableProperty().bind(
                 Bindings.isEmpty(loginUserName.textProperty())
@@ -37,21 +39,36 @@ public class LoginController implements Initializable {
     }
 
     @FXML
-    void onLoginClicked(ActionEvent event) throws Exception {
+    void onLoginClicked() throws Exception {
         boolean isPresent = false;
         String userRole = validateUser();
-        if (!userRole.equals("")){
+        if (!userRole.equals("")) {
             isPresent = true;
         }
         if (isPresent) {
-            NavigationHelper.navigate(event, userRole, loginUserName.getText().trim());
+            String page = "";
+            switch (userRole) {
+                case Constants.ADMIN:
+                    page = Constants.ADMIN_PAGE;
+                    break;
+                case Constants.MANAGEMENT:
+                    page = Constants.MANAGEMENT_PAGE;
+                    break;
+                case Constants.STAFF:
+                    page = Constants.STAFF_PAGE;
+                    break;
+                default:
+                    page = Constants.LOGIN_PAGE;
+                    break;
+            }
+            NavigationHelper.navigate("view/" + page, loginUserName.getText().trim(), userRole);
         } else {
             err.setText("Incorrect Username or password");
             throw new Exception("Incorrect Username or password.");
         }
     }
 
-    private String  validateUser() throws Exception {
+    private String validateUser() throws Exception {
         if (loginUserName.getText().trim().equals("superadmin") && loginUserName.getText().trim().equals("superadmin")) {
             return "Staff";
         }

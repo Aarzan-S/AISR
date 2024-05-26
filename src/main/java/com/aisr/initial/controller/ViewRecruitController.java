@@ -1,15 +1,16 @@
 package com.aisr.initial.controller;
 
 import com.aisr.initial.model.Recruit;
+import com.aisr.initial.util.Constants;
 import com.aisr.initial.util.FileUtil;
 import com.aisr.initial.util.NavigationHelper;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Duration;
@@ -19,33 +20,45 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class ViewRecruitController implements Initializable {
+public class ViewRecruitController implements Controller {
     String userName;
     String userRole;
     List<Recruit> recruitList = new ArrayList<>();
+    ObservableList<Recruit> recruits = FXCollections.observableArrayList();
+    FilteredList<Recruit> filteredList = new FilteredList<>(recruits);
     @FXML
     TableView<Recruit> tableView = new TableView<>();
     @FXML
     Label infoLabel;
+    @FXML
+    TextField searchBox;
 
-    public void setUserInfo(String userName, String userRole) {
+    @Override
+    public void setUp(String userName, String userRole) {
         this.userName = userName;
         this.userRole = userRole;
+        loadRecruitData();
+    }
+
+    public void loadRecruitData() {
+        fetchData();
+        createColumns();
+        tableView.setItems(filteredList);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-    }
-
-    public void init() {
-        fetchData();
-        createColumns();
-        tableView.getItems().addAll(recruitList);
+        searchBox.textProperty().addListener((obs, oldVal, newVal) -> filteredList.setPredicate(recruit -> {
+            if (newVal == null || newVal.isEmpty()) {
+                return true;
+            }
+            return recruit.getFullName().toLowerCase().contains(newVal.toLowerCase().trim());
+        }));
     }
 
     private void fetchData() {
         recruitList = FileUtil.fetchRecruitDetails();
-        recruitList.forEach(System.out::println);
+        recruits.addAll(recruitList);
     }
 
     private void createColumns() {
@@ -85,7 +98,7 @@ public class ViewRecruitController implements Initializable {
         locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
         locationColumn.setPrefWidth(100);
         locationColumn.setCellFactory(col -> new ComboBoxCell(FXCollections.observableArrayList("None", "Brisbane",
-                "Adelaide", "Sydney", "Melbourne"),"location"));
+                "Adelaide", "Sydney", "Melbourne"), "location"));
         locationColumn.setEditable(false);
 
         TableColumn<Recruit, Void> buttonColumn = new TableColumn<>("Action");
@@ -100,7 +113,7 @@ public class ViewRecruitController implements Initializable {
         this.recruitList.clear();
         this.tableView.getItems().clear();
         this.fetchData();
-        tableView.getItems().addAll(recruitList);
+        tableView.setItems(filteredList);
         this.showMessage("Refreshed Successfully");
     }
 
@@ -173,8 +186,9 @@ public class ViewRecruitController implements Initializable {
     }
 
     @FXML
-    private void navigateBack(ActionEvent event) {
-        NavigationHelper.navigate(event, userRole, userName);
+    private void navigateBack() {
+        String page = userRole.equals("Admin") ? Constants.ADMIN_PAGE : Constants.MANAGEMENT_PAGE;
+        NavigationHelper.navigate("view/" + page, userName, userRole);
     }
 
 }

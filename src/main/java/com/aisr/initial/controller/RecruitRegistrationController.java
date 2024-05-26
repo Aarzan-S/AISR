@@ -7,18 +7,16 @@ import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.util.Duration;
 
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class RecruitRegistrationController implements Initializable {
+public class RecruitRegistrationController implements Controller {
     @FXML
     private TextField recruitFullname;
     @FXML
@@ -46,7 +44,8 @@ public class RecruitRegistrationController implements Initializable {
     String userName;
     String userRole;
 
-    public void setUserInfo(String userName, String userRole) {
+    @Override
+    public void setUp(String userName, String userRole) {
         this.userName = userName;
         this.userRole = userRole;
     }
@@ -77,8 +76,8 @@ public class RecruitRegistrationController implements Initializable {
     }
 
     @FXML
-    private void navigateBack(ActionEvent event) {
-        NavigationHelper.navigate(event, userRole, userName);
+    private void navigateBack() {
+        NavigationHelper.navigate("view/" + Constants.ADMIN_PAGE, userName, userRole);
     }
 
     @FXML
@@ -90,7 +89,7 @@ public class RecruitRegistrationController implements Initializable {
             showErrorMessage("Email is not valid.", recruitErrorMessage);
             return;
         }
-        String errorMessage = FileUtil.checkForDuplicates(recruitPhone.getText(), recruitEmail.getText(),
+        String errorMessage = FileUtil.validateUniqueFields(recruitPhone.getText(), recruitEmail.getText(),
                 recruitUsername.getText(), Constants.RECRUIT_CSV_FILE);
         if (!errorMessage.isEmpty()) {
             showErrorMessage(errorMessage, recruitErrorMessage);
