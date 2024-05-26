@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * This class handles view recruit logic
+ */
 public class ViewRecruitController implements Controller {
     String userName;
     String userRole;
@@ -33,6 +36,12 @@ public class ViewRecruitController implements Controller {
     @FXML
     TextField searchBox;
 
+    /**
+     * Initialize userName and userRole for this class
+     * Loads recruit data from file
+     * @param userName name of the logged-in user
+     * @param userRole role of the logged-in user e.g. Admin, Management
+     */
     @Override
     public void setUp(String userName, String userRole) {
         this.userName = userName;
@@ -40,12 +49,20 @@ public class ViewRecruitController implements Controller {
         loadRecruitData();
     }
 
+    /**
+     * Loads data from file, creates column definitions and set the columns along with their data.
+     */
     public void loadRecruitData() {
         fetchData();
         createColumns();
         tableView.setItems(filteredList);
     }
 
+    /**
+     *  Binds the searchBox property to an event listener which hand;les searching
+     * @param url
+     * @param rb
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         searchBox.textProperty().addListener((obs, oldVal, newVal) -> filteredList.setPredicate(recruit -> {
@@ -56,11 +73,17 @@ public class ViewRecruitController implements Controller {
         }));
     }
 
+    /**
+     * Loads Recruit data from file and adds those records into recruits which is List of Observables
+     */
     private void fetchData() {
         recruitList = FileUtil.fetchRecruitDetails();
         recruits.addAll(recruitList);
     }
 
+    /**
+     * It will create table definition by defining rows for the table
+     */
     private void createColumns() {
         tableView.setEditable(false);
         TableColumn<Recruit, String> nameColumn = new TableColumn<>("Full Name");
@@ -109,6 +132,11 @@ public class ViewRecruitController implements Controller {
                 passwordColumn, interviewDateColumn, highestQualificationColumn, departmentColumn, locationColumn, buttonColumn);
     }
 
+    /**
+     * Fetches updated data from file.
+     * @param actionEvent
+     */
+    @FXML
     public void onRefresh(ActionEvent actionEvent) {
         this.recruitList.clear();
         this.tableView.getItems().clear();
@@ -117,6 +145,9 @@ public class ViewRecruitController implements Controller {
         this.showMessage("Refreshed Successfully");
     }
 
+    /**
+     * Show success message on UI for 5 seconds then it will get reset to empty string
+     */
     private void showMessage(String message) {
         this.infoLabel.setText(message);
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5),
@@ -125,6 +156,10 @@ public class ViewRecruitController implements Controller {
         timeline.play();
     }
 
+    /**
+     * This class defines the property of dropdown column in table namely
+     *  location and department.
+     */
     private class ComboBoxCell extends TableCell<Recruit, String> {
         private final ComboBox<String> comboBox;
 
@@ -154,6 +189,10 @@ public class ViewRecruitController implements Controller {
         }
     }
 
+    /**
+     * This class defines button property for 'Update' button in table.
+     * updateCSV method is bind to the click event of the button
+     */
     private class ButtonCell extends TableCell<Recruit, Void> {
         private final Button updateButton;
         private final String userRole;
@@ -179,12 +218,20 @@ public class ViewRecruitController implements Controller {
         }
     }
 
+    /**
+     * Updates the table row, and is  bind to 'Update' button in table row
+     * @param recruit Recruit Object representing updated row
+     * @param index Index of row in the table
+     */
     private void updateCSV(Recruit recruit, int index) {
         FileUtil.updateCSV(recruit, index);
         this.showMessage("Recruit Updated Successfully");
         System.out.println("Recruit Updated Successfully");
     }
 
+    /**
+     * Navigates to Admin page or Staff page based on the logged-in user
+     */
     @FXML
     private void navigateBack() {
         String page = userRole.equals("Admin") ? Constants.ADMIN_PAGE : Constants.MANAGEMENT_PAGE;

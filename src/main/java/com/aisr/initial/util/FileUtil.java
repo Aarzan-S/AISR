@@ -10,12 +10,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * This class contains methods related to file handling
+ */
 public class FileUtil {
+    /**
+     * Checks whether specified file ecists or not
+     *
+     * @param fileName name of the file
+     * @return true if file exits else false
+     */
     public static boolean doesFileExists(String fileName) {
         File file = new File(fileName);
         return file.exists();
     }
 
+    /**
+     * Counts number of rows in csv file
+     *
+     * @param fileName name of the file
+     */
     public static void countNoOfRecords(String fileName) {
         if (doesFileExists(fileName)) {
             try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
@@ -26,8 +40,17 @@ public class FileUtil {
         }
     }
 
+    /**
+     * Validated uniqueness of the fields
+     *
+     * @param phoneNumber
+     * @param emailAddress
+     * @param userName
+     * @param fileName
+     * @return empty string if there are no matching fields in file else respective error message
+     */
     public static String validateUniqueFields(String phoneNumber, String emailAddress, String userName, String fileName) {
-        if (userName.toLowerCase().contains("admin")){
+        if (userName.toLowerCase().contains("admin")) {
             return "Username must not contain admin";
         }
         List<String[]> rows;
@@ -35,7 +58,7 @@ public class FileUtil {
             try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
                 rows = br.lines().skip(1).map(row -> row.split(",")).collect(Collectors.toList());
             } catch (IOException e) {
-                throw new CustomException("Could not read staff file : "+e.getMessage());
+                throw new CustomException("Could not read staff file : " + e.getMessage());
             }
             if (rows.stream().anyMatch(data -> phoneNumber.equals(data[3]))) {
                 return "Phone Number already used";
@@ -48,6 +71,11 @@ public class FileUtil {
         return "";
     }
 
+    /**
+     * Fetches recruit data
+     *
+     * @return list of recruits
+     */
     public static List<Recruit> fetchRecruitDetails() {
         List<Recruit> recruitList = new ArrayList<>();
         if (doesFileExists(Constants.RECRUIT_CSV_FILE)) {
@@ -71,12 +99,17 @@ public class FileUtil {
                 }).collect(Collectors.toList());
             } catch (IOException e) {
                 System.err.println("Could not load recruit data.");
-                throw new CustomException("Could not load recruit data : "+ e.getMessage());
+                throw new CustomException("Could not load recruit data : " + e.getMessage());
             }
         }
         return recruitList;
     }
 
+    /**
+     * Fetches recruit data
+     *
+     * @return list of recruits
+     */
     public static List<Recruit> fetchRecruitHistoryDetails() {
         List<Recruit> recruitList = new ArrayList<>();
         if (doesFileExists(Constants.RECRUIT_CSV_FILE)) {
@@ -94,12 +127,18 @@ public class FileUtil {
                 }).collect(Collectors.toList());
             } catch (IOException e) {
                 System.err.println("Could not load recruit history data.");
-                throw new CustomException("Could not load recruit history data : "+e.getMessage());
+                throw new CustomException("Could not load recruit history data : " + e.getMessage());
             }
         }
         return recruitList;
     }
 
+    /**
+     * Updates the recruit data
+     *
+     * @param recruit Updated Recruit Object
+     * @param index   index of recruit to be updated
+     */
     public static void updateCSV(Recruit recruit, int index) {
         System.out.println("recruit : " + recruit.toString());
         try (BufferedReader reader = new BufferedReader(new FileReader(Constants.RECRUIT_CSV_FILE))) {
@@ -141,6 +180,12 @@ public class FileUtil {
         }
     }
 
+    /**
+     * Adds new recruit entry to file
+     *
+     * @param recruitList Recruit List
+     * @throws Exception
+     */
     public static void addRecruitData(List<Recruit> recruitList) throws Exception {
         if (!doesFileExists(Constants.RECRUIT_CSV_FILE)) {
             new File(Constants.RECRUIT_CSV_FILE).createNewFile();

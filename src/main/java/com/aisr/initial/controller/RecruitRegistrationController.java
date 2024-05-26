@@ -15,7 +15,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-
+/**
+ * THis class handles recruit registration mechanism
+ */
 public class RecruitRegistrationController implements Controller {
     @FXML
     private TextField recruitFullname;
@@ -44,12 +46,25 @@ public class RecruitRegistrationController implements Controller {
     String userName;
     String userRole;
 
+    /**
+     * initialize userName and userRole for this class
+     * @param userName name of the logged-in user
+     * @param userRole role of the logged-in user e.g. Admin, Management
+     */
     @Override
     public void setUp(String userName, String userRole) {
         this.userName = userName;
         this.userRole = userRole;
     }
 
+    /**
+     * It initializes necessary fields for the class such as headerLabel, recruitQualificationLevel
+     * It adds validation to phone number field to accept only number and 10 digits only.
+     * It also binds validation to date picker to disable past dates and set today's date as default date.
+     * It will binds disable property to add button if the input fields are empty
+     * @param url
+     * @param rb
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         recruitQualificationLevel.getItems().addAll("Bachelors", "Masters", "PhD");
@@ -74,12 +89,20 @@ public class RecruitRegistrationController implements Controller {
         );
 
     }
-
+    /**
+     * Navigates to Admin page.
+     */
     @FXML
     private void navigateBack() {
         NavigationHelper.navigate("view/" + Constants.ADMIN_PAGE, userName, userRole);
     }
 
+    /**
+     * Handles the adding of recruit details
+     * Handles white spaces, email and phone number validation.
+     * Validates uniqueness of username,email and phone so that there is no duplicate/redundant entry.
+     * Recruit Object is created and added to recruitList upon successful validation/
+     */
     @FXML
     private void addAnotherRecruit() {
         if (!Validator.validatePhoneNumber(recruitPhone.getText())) {
@@ -113,6 +136,10 @@ public class RecruitRegistrationController implements Controller {
         showMessage();
     }
 
+    /**
+     *  Saves Recruit information in the file
+     * @throws Exception
+     */
     @FXML
     private void saveRecuiterInfoForAssigning(ActionEvent event) throws Exception {
         if (recruitList.isEmpty()) {
@@ -126,6 +153,10 @@ public class RecruitRegistrationController implements Controller {
         System.out.println("Recruit data has been saved .");
     }
 
+    /**
+     * It will clear all the input fields.
+     * It is generally used when Admin details are added to adminList or saved to file.
+     */
     public void clearInputFields() {
         recruitErrorMessage.setText("");
         recruitFullname.clear();
@@ -138,11 +169,19 @@ public class RecruitRegistrationController implements Controller {
         recruitQualificationLevel.setValue(null);
     }
 
+    /**
+     * Shows error message in the specified label.
+     * @param message message to be displayed on error label
+     * @param label name of the label in ui
+     */
     private static void showErrorMessage(String message, Label label) {
         System.err.println(message);
         label.setText(message);
     }
 
+    /**
+     * Shows success message on UI for 5 seconds then it will get reset to empty string
+     */
     private void showMessage() {
         recruitSuccessMessage.setText("Recruit data is added. Please Save to persist the data.");
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), event -> recruitSuccessMessage.setText("")));

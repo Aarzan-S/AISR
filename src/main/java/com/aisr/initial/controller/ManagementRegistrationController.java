@@ -18,6 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * This class handles management staff registration mechanism
+ */
 public class ManagementRegistrationController implements Controller {
     private String userName;
     private String userRole;
@@ -48,12 +51,25 @@ public class ManagementRegistrationController implements Controller {
     @FXML
     private Button addManagementBtn;
 
+    /**
+     * Initialize userName and userRole for this class
+     * @param userName name of the logged-in user
+     * @param userRole role of the logged-in user e.g. Admin, Management
+     */
     @Override
     public void setUp(String userName, String userRole) {
         this.userName = userName;
         this.userRole = userRole;
     }
 
+    /**
+     * Initializes necessary fields for the class such as headerLabel, managementStaffManagementLevel
+     * and managementStaffBranch.I
+     * Adds validation to phone number field to accept only number and 10 digits only.
+     * Binds disable property to add button if the input fields are empty
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         messageLabel.setText("Management Registration Page");
@@ -72,11 +88,20 @@ public class ManagementRegistrationController implements Controller {
         );
     }
 
+    /**
+     * Navigates to Staff page.
+     */
     @FXML
     void goBack() {
         NavigationHelper.navigate("view/" + Constants.STAFF_PAGE, userName, userRole);
     }
 
+    /**
+     * Handles the adding of management staff details
+     * Handles white spaces, email and phone number validation.
+     * Validates uniqueness of username,email and phone so that there is no duplicate/redundant entry..
+     * Creates ManagementStaff Object and adds to managementList .
+     */
     @FXML
     private void addManagementDetails() {
         if (validateWhiteSpace()) return;
@@ -113,6 +138,10 @@ public class ManagementRegistrationController implements Controller {
         clearInputFields();
     }
 
+    /**
+     *  Saves ManagementStaff information in the file.
+     * @throws Exception
+     */
     @FXML
     private void registerManagementStaff(ActionEvent event) throws Exception {
         if (managementList.isEmpty()) {
@@ -125,6 +154,10 @@ public class ManagementRegistrationController implements Controller {
         System.out.println("Management data saved successfully.");
     }
 
+    /**
+     * It will clear all the input fields.
+     * It is generally used when Admin details are added to managementList or saved to file.
+     */
     public void clearInputFields() {
         managementErrorMessage.setText("");
         managementStaffFullname.clear();
@@ -137,6 +170,11 @@ public class ManagementRegistrationController implements Controller {
         managementStaffBranch.setValue(null);
     }
 
+    /**
+     * It will validate the input fields against whitespace characters.
+     * it will return true if any of the input fields contain only white space otherwise it will return false.
+     * @return
+     */
     private boolean validateWhiteSpace() {
         if (managementStaffFullname.getText().isBlank() ||
                 managementStaffAddress.getText().isBlank() ||
@@ -152,11 +190,19 @@ public class ManagementRegistrationController implements Controller {
         return false;
     }
 
+    /**
+     * It will show error message in the specified label.
+     * @param message message to be displayed on error label
+     * @param label name of the label in ui
+     */
     private static void showErrorMessage(String message, Label label) {
         System.err.println(message);
         label.setText(message);
     }
 
+    /**
+     * It will show success message on UI for 5 seconds then it will get reset to empty string
+     */
     private void showMessage() {
         managementSuccessMessage.setText("Management details added. Please Save to persist the data.");
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), event -> managementSuccessMessage.setText("")));

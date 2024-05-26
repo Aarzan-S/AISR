@@ -1,7 +1,9 @@
 package com.aisr.initial.model;
 
 import java.time.LocalDate;
-
+/**
+ * This class represents Recruit properties
+ */
 public class Recruit {
     private String fullName;
     private String address;
@@ -16,9 +18,27 @@ public class Recruit {
     private String recruitedBy;
     private LocalDate recruitedOn;
 
+    /**
+     * Empty constructor for Recruit
+     */
     public Recruit() {
     }
 
+    /**
+     * Parameterized constructor containing all fields
+     * @param fullName
+     * @param address
+     * @param phoneNumber
+     * @param email
+     * @param username
+     * @param password
+     * @param interviewDate
+     * @param highestQualification
+     * @param department
+     * @param location
+     * @param recruitedBy
+     * @param recruitedOn
+     */
     public Recruit(String fullName, String address, Long phoneNumber, String email,
                    String username, String password, LocalDate interviewDate, String highestQualification, String department,
                    String location, String recruitedBy, LocalDate recruitedOn) {
@@ -36,6 +56,15 @@ public class Recruit {
         this.recruitedOn = recruitedOn;
     }
 
+    /**
+     * overloaded Parameterized constructor containing few fields
+     * @param fullName
+     * @param phoneNumber
+     * @param email
+     * @param username
+     * @param recruitedBy
+     * @param recruitedOn
+     */
     public Recruit(String fullName, Long phoneNumber, String email, String username, String recruitedBy,
                    LocalDate recruitedOn) {
         this.fullName = fullName;
@@ -46,8 +75,10 @@ public class Recruit {
         this.recruitedOn = recruitedOn;
     }
 
-    // Getter methods
-    public String getFullName() {
+    /**
+     * Getter methods to retrieve fields value
+     * @return respective fields value
+     */    public String getFullName() {
         return fullName;
     }
 
@@ -95,7 +126,9 @@ public class Recruit {
         return recruitedOn;
     }
 
-    // Setter methods
+    /**
+     * Setter methods to set fields value
+     */
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
@@ -144,6 +177,10 @@ public class Recruit {
         this.recruitedOn = recruitedOn;
     }
 
+    /**
+     * Custom command separated toString implementation of Recruit
+     * @return comma separated string representing Recruit object
+     */
     @Override
     public String toString() {
         return String.join(",", getFullName(), getAddress(), getPhoneNumber().toString(),

@@ -21,10 +21,20 @@ public class NavigationHelper {
     private NavigationHelper() {
     }
 
+    /**
+     * Sets primary stage for the application which will be later used for changing scenes
+     * @param stage
+     */
     public static void setPrimaryStage(Stage stage) {
         primaryStage = stage;
     }
 
+    /**
+     *  Navigates to provided scene
+     * @param fxmlPath path of file
+     * @param userName
+     * @param userRole
+     */
     public static void navigate(String fxmlPath, String userName, String userRole) {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource(fxmlPath));
         Parent root;

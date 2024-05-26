@@ -1,5 +1,8 @@
 package com.aisr.initial.model;
 
+/**
+ * This is the base class that represent base class both AdminStaff and ManagementStaff
+ */
 public class Staff {
     private String fullName;
     private String address;
@@ -9,10 +12,23 @@ public class Staff {
     private String password;
     private String staffId;
 
+    /**
+     * Empty constructor for Staff
+     */
     public Staff() {
     }
 
-
+    /**
+     * Parameterized constructor containing all fields
+     *
+     * @param fullName
+     * @param address
+     * @param phoneNumber
+     * @param email
+     * @param username
+     * @param password
+     * @param staffId
+     */
     public Staff(String fullName, String address, Long phoneNumber, String email, String username, String password,
                  String staffId) {
         this.fullName = fullName;
@@ -24,6 +40,10 @@ public class Staff {
         this.staffId = staffId;
     }
 
+    /**
+     * Getter methods to retrieve fields value
+     * @return respective fields value
+     */
     public String getFullName() {
         return fullName;
     }
@@ -52,6 +72,9 @@ public class Staff {
         return staffId;
     }
 
+    /**
+     * Setter methods to set fields value
+     */
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
@@ -80,6 +103,10 @@ public class Staff {
         this.staffId = staffId;
     }
 
+    /**
+     * Custom command separated toString implementation of Staff
+     * @return comma separated string representing Staff object
+     */
     @Override
     public String toString() {
         return String.join(",", fullName, address, phoneNumber.toString(), email, username, password, staffId);

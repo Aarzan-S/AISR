@@ -1,5 +1,6 @@
 package com.aisr.initial.controller;
 
+import com.aisr.initial.exception.CustomException;
 import com.aisr.initial.util.Constants;
 import com.aisr.initial.util.FileUtil;
 import com.aisr.initial.util.HashingUtil;
@@ -16,6 +17,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * This class handles authentication and authorization
+ */
 public class LoginController implements Controller {
     @FXML
     private TextField loginUserName;
@@ -26,18 +30,36 @@ public class LoginController implements Controller {
     @FXML
     private Button loginBtn;
 
+    /**
+     * This is empty implementation of setUp method.
+     * Can be updated as per need.
+     */
     @Override
     public void setUp(String userName, String userRole) {
     }
 
+    /**
+     * Binds loginBtn to binding which will disable button
+     * if the username and password fields are empty.
+     * @param url
+     * @param rb
+     */
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize(URL url, ResourceBundle rb) {
         loginBtn.disableProperty().bind(
-                Bindings.isEmpty(loginUserName.textProperty())
-                        .or(Bindings.isEmpty(loginUserPassword.textProperty()))
+                Bindings.createBooleanBinding(() -> {
+                    return loginUserName.getText().trim().isEmpty() ||
+                            loginUserPassword.getText().trim().isEmpty();
+                }, loginUserName.textProperty(), loginUserPassword.textProperty())
         );
     }
 
+    /**
+     * Validates username and password, if credential match, it will redirect the user to respective page
+     * based on user type.
+     * If credential did not match it will show error message.
+     * @throws Exception
+     */
     @FXML
     void onLoginClicked() throws Exception {
         boolean isPresent = false;
@@ -64,10 +86,15 @@ public class LoginController implements Controller {
             NavigationHelper.navigate("view/" + page, loginUserName.getText().trim(), userRole);
         } else {
             err.setText("Incorrect Username or password");
-            throw new Exception("Incorrect Username or password.");
+            throw new CustomException("Incorrect Username or password.");
         }
     }
 
+    /**
+     * Checks whether username and password provided match or not.
+     * @return user type if credentials are valid else empty string
+     * @throws Exception
+     */
     private String validateUser() throws Exception {
         if (loginUserName.getText().trim().equals("superadmin") && loginUserName.getText().trim().equals("superadmin")) {
             return "Staff";
@@ -89,8 +116,6 @@ public class LoginController implements Controller {
         } catch (IOException e) {
             System.err.println("Could not read staff record file.");
         }
-        System.out.println("failed to found");
-
         return "";
     }
 }
