@@ -52,7 +52,7 @@ public class AdminStaff extends Staff {
      */
     @Override
     public String toString() {
-        return String.join(",", "Admin", super.toString(), positionType, "N/A", "N/A");
+        return String.join(",",  super.toString(), positionType, "N/A", "N/A");
 
     }
 

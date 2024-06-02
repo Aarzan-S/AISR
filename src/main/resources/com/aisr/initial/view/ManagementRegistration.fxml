@@ -14,15 +14,13 @@
     <children>
         <Button layoutX="14.0" layoutY="13.0" mnemonicParsing="false" onAction="#goBack" onMouseClicked="#goBack"
                 text="Go Back"/>
-        <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="93.0" layoutY="25.0"
+        <Label fx:id="headerLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="93.0" layoutY="25.0"
                prefHeight="24.0" prefWidth="390.0">
             <font>
                 <Font size="14.0"/>
             </font>
         </Label>
-        <Label fx:id="managementErrorMessage" alignment="CENTER" contentDisplay="CENTER" layoutX="97.0" layoutY="70.0"
-               prefHeight="24.0" prefWidth="426.0" textFill="#f23939"/>
-        <Label fx:id="managementSuccessMessage" alignment="CENTER" contentDisplay="CENTER" layoutX="74.0" layoutY="70.0"
+        <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="74.0" layoutY="70.0"
                prefHeight="24.0" prefWidth="452.0" textFill="#72d46d"/>
         <Label layoutX="18.0" layoutY="116.0" text="Full name"/>
         <TextField fx:id="managementStaffFullname" layoutX="91.0" layoutY="112.0" prefHeight="25.0" prefWidth="197.0"/>

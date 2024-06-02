@@ -59,11 +59,11 @@ public class ManagementStaff extends Staff {
     }
 
     /**
-     * Custom command separated toString implementation of ManagementStaff
+     * Custom comma separated toString implementation of ManagementStaff
      * @return comma separated string representing ManagementStaff object
      */
     @Override
     public String toString() {
-        return String.join(",", "Management", super.toString(), "N/A", level, branch);
+        return String.join(",",  super.toString(), "N/A", level, branch);
     }
 }

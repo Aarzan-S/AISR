@@ -1,7 +1,11 @@
 package com.aisr.initial.controller;
 
-import com.aisr.initial.util.Constants;
-import com.aisr.initial.util.NavigationHelper;
+import com.aisr.initial.model.IModel;
+import com.aisr.initial.model.ManagementStaff;
+import com.aisr.initial.model.ManagementStaffModel;
+import com.aisr.initial.presenter.ManagementPresenter;
+import com.aisr.initial.util.routing.NavigationHelper;
+import com.aisr.initial.view.IView;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
@@ -11,7 +15,12 @@ import java.util.ResourceBundle;
 /**
  * This class handles all the functionality of Management page.
  */
-public class ManagementController implements Controller {
+public class ManagementController implements Controller, IView<ManagementStaff> {
+    private static final String VIEW_RECRUIT_PAGE = "ViewRecruit.fxml";
+    private static final String LOGIN_PAGE = "Login.fxml";
+
+    private ManagementPresenter presenter;
+
     private String userName;
 
     private String userRole;
@@ -36,6 +45,9 @@ public class ManagementController implements Controller {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        IModel<ManagementStaff> model = new ManagementStaffModel();
+        presenter = new ManagementPresenter(model, this);
+        model.connect();
     }
 
     /**
@@ -43,7 +55,7 @@ public class ManagementController implements Controller {
      */
     @FXML
     private void viewRecruitDetails() {
-        NavigationHelper.navigate("view/" + Constants.VIEW_RECRUIT_PAGE, userName, userRole);
+        NavigationHelper.navigate("view/" + VIEW_RECRUIT_PAGE, userName, userRole);
     }
 
     /**
@@ -51,7 +63,21 @@ public class ManagementController implements Controller {
      */
     @FXML
     private void logout() {
-        NavigationHelper.navigate("view/" + Constants.LOGIN_PAGE, "", "");
+        NavigationHelper.navigate("view/" + LOGIN_PAGE, "", "");
     }
 
+    @Override
+    public void display(ManagementStaff object) {
+
+    }
+
+    @Override
+    public void display(String message, String type) {
+
+    }
+
+    @Override
+    public void clearInputs() {
+
+    }
 }

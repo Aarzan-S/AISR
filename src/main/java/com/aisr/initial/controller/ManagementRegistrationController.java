@@ -1,9 +1,13 @@
 package com.aisr.initial.controller;
 
+import com.aisr.initial.Main;
+import com.aisr.initial.model.IModel;
 import com.aisr.initial.model.ManagementStaff;
-import com.aisr.initial.util.*;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import com.aisr.initial.model.ManagementStaffModel;
+import com.aisr.initial.presenter.ManagementRegistrationPresenter;
+import com.aisr.initial.util.routing.NavigationHelper;
+import com.aisr.initial.util.validator.NumberFieldValidator;
+import com.aisr.initial.view.IView;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,23 +15,21 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.util.Duration;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
  * This class handles management staff registration mechanism
  */
-public class ManagementRegistrationController implements Controller {
+public class ManagementRegistrationController implements Controller, IView<ManagementStaff> {
+    public static final String STAFF_PAGE = "Staff.fxml";
+
+    private ManagementRegistrationPresenter presenter;
     private String userName;
     private String userRole;
-    List<ManagementStaff> managementList = new ArrayList<>();
-
     @FXML
-    private Label messageLabel;
+    private Label headerLabel;
     @FXML
     private TextField managementStaffFullname;
     @FXML
@@ -45,14 +47,13 @@ public class ManagementRegistrationController implements Controller {
     @FXML
     private ChoiceBox<String> managementStaffBranch = new ChoiceBox<>();
     @FXML
-    private Label managementErrorMessage;
-    @FXML
-    private Label managementSuccessMessage;
+    private Label messageLabel;
     @FXML
     private Button addManagementBtn;
 
     /**
      * Initialize userName and userRole for this class
+     *
      * @param userName name of the logged-in user
      * @param userRole role of the logged-in user e.g. Admin, Management
      */
@@ -67,12 +68,16 @@ public class ManagementRegistrationController implements Controller {
      * and managementStaffBranch.I
      * Adds validation to phone number field to accept only number and 10 digits only.
      * Binds disable property to add button if the input fields are empty
+     *
      * @param url
      * @param resourceBundle
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        messageLabel.setText("Management Registration Page");
+        IModel<ManagementStaff> model = new ManagementStaffModel();
+        presenter = new ManagementRegistrationPresenter(model, this);
+        model.connect();
+        headerLabel.setText("Management Registration Page");
         managementStaffManagementLevel.getItems().addAll("Senior Manager", "Mid-level Manager", "Supervisor");
         managementStaffBranch.getItems().addAll("Brisbane", "Adelaide", "Sydney", "Melbourne");
         managementStaffPhone.setTextFormatter(new NumberFieldValidator());
@@ -93,7 +98,7 @@ public class ManagementRegistrationController implements Controller {
      */
     @FXML
     void goBack() {
-        NavigationHelper.navigate("view/" + Constants.STAFF_PAGE, userName, userRole);
+        NavigationHelper.navigate("view/" + STAFF_PAGE, userName, userRole);
     }
 
     /**
@@ -104,62 +109,51 @@ public class ManagementRegistrationController implements Controller {
      */
     @FXML
     private void addManagementDetails() {
-        if (validateWhiteSpace()) return;
-        if (!Validator.validatePhoneNumber(managementStaffPhone.getText().trim())) {
-            System.err.println("Phone Number is not valid.");
-            managementErrorMessage.setText("Phone Number is not valid.");
-            return;
-        } else if (!Validator.validateEmail(managementStaffEmail.getText().trim())) {
-            System.err.println("Email is not valid.");
-            managementErrorMessage.setText("Email is not valid.");
-            return;
-        }
-        String errorMessage = FileUtil.validateUniqueFields(managementStaffPhone.getText().trim(),
-                managementStaffEmail.getText().trim(), managementStaffUsername.getText().trim(),
-                Constants.STAFF_CSV_FILE);
-        if (!errorMessage.isEmpty()) {
-            showErrorMessage(errorMessage, managementErrorMessage);
-            return;
-        }
-
         ManagementStaff managementDetails = new ManagementStaff(
                 managementStaffFullname.getText(),
                 managementStaffAddress.getText(),
                 Long.parseLong(managementStaffPhone.getText()),
                 managementStaffEmail.getText(),
                 managementStaffUsername.getText(),
-                HashingUtil.generateHash(managementStaffPassword.getText()),
-                String.valueOf(Constants.noOfEntries),
+                managementStaffPassword.getText(),
+                "Management-" + Main.noOfEntries,
                 managementStaffManagementLevel.getValue(),
                 managementStaffBranch.getValue()
         );
-        managementList.add(managementDetails);
-        showMessage();
-        clearInputFields();
+        presenter.add(managementDetails);
     }
 
     /**
-     *  Saves ManagementStaff information in the file.
+     * Saves ManagementStaff information in the file.
      * @throws Exception
      */
     @FXML
     private void registerManagementStaff(ActionEvent event) throws Exception {
-        if (managementList.isEmpty()) {
-            managementSuccessMessage.setText("There are no management entries.");
-            return;
+        presenter.register();
+    }
+
+    @Override
+    public void display(ManagementStaff object) {
+
+    }
+
+    @Override
+    public void display(String message, String type) {
+        if ("INFO".equals(type)) {
+            messageLabel.setStyle("-fx-text-fill: green;");
+            messageLabel.setText(message);
+        } else {
+            messageLabel.setStyle("-fx-text-fill: red;");
+            messageLabel.setText(message);
         }
-        FileUtil.addStaffData(Constants.STAFF_CSV_FILE, managementList);
-        clearInputFields();
-        managementSuccessMessage.setText("Management data saved successfully");
-        System.out.println("Management data saved successfully.");
     }
 
     /**
      * It will clear all the input fields.
-     * It is generally used when Admin details are added to managementList or saved to file.
      */
-    public void clearInputFields() {
-        managementErrorMessage.setText("");
+    @Override
+    public void clearInputs() {
+        messageLabel.setText("");
         managementStaffFullname.clear();
         managementStaffAddress.clear();
         managementStaffPhone.clear();
@@ -170,43 +164,4 @@ public class ManagementRegistrationController implements Controller {
         managementStaffBranch.setValue(null);
     }
 
-    /**
-     * It will validate the input fields against whitespace characters.
-     * it will return true if any of the input fields contain only white space otherwise it will return false.
-     * @return
-     */
-    private boolean validateWhiteSpace() {
-        if (managementStaffFullname.getText().isBlank() ||
-                managementStaffAddress.getText().isBlank() ||
-                managementStaffPhone.getText().isBlank() ||
-                managementStaffEmail.getText().isBlank() ||
-                managementStaffUsername.getText().isBlank() ||
-                managementStaffPassword.getText().isBlank() ||
-                managementStaffManagementLevel.getValue() == null ||
-                managementStaffBranch.getValue() == null) {
-            managementErrorMessage.setText("Please enter all fields.");
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * It will show error message in the specified label.
-     * @param message message to be displayed on error label
-     * @param label name of the label in ui
-     */
-    private static void showErrorMessage(String message, Label label) {
-        System.err.println(message);
-        label.setText(message);
-    }
-
-    /**
-     * It will show success message on UI for 5 seconds then it will get reset to empty string
-     */
-    private void showMessage() {
-        managementSuccessMessage.setText("Management details added. Please Save to persist the data.");
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), event -> managementSuccessMessage.setText("")));
-        timeline.setCycleCount(1);
-        timeline.play();
-    }
 }

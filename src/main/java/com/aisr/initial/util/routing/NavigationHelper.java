@@ -1,4 +1,4 @@
-package com.aisr.initial.util;
+package com.aisr.initial.util.routing;
 
 import com.aisr.initial.Main;
 import com.aisr.initial.controller.Controller;
@@ -15,7 +15,6 @@ import java.io.IOException;
     progress through different pages
  */
 public class NavigationHelper {
-    private static NavigationHelper instance;
     private static Stage primaryStage;
 
     private NavigationHelper() {

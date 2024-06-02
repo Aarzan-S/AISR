@@ -27,9 +27,8 @@
                 <Font name="System Bold" size="14.0"/>
             </font>
         </Text>
-        <Label fx:id="recruitErrorMessage" alignment="CENTER" contentDisplay="CENTER" layoutX="95.0" layoutY="55.0"
-               prefHeight="25.0" prefWidth="433.0" textFill="#f23939"/>
-        <Label fx:id="recruitSuccessMessage" alignment="CENTER" contentDisplay="CENTER" layoutX="68.0" layoutY="68.0"
+
+        <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="68.0" layoutY="68.0"
                prefHeight="25.0" prefWidth="463.0" textFill="#72d46d"/>
         <Label layoutX="19.0" layoutY="128.0" text="Full Name"/>
         <TextField fx:id="recruitFullname" layoutX="98.0" layoutY="124.0" prefHeight="25.0" prefWidth="180.0"/>
@@ -51,6 +50,6 @@
         <Button fx:id="addAnotherRecruitBtn" layoutX="70.0" layoutY="339.0" mnemonicParsing="false"
                 onAction="#addAnotherRecruit" prefHeight="25.0" prefWidth="96.0" text="Add"/>
         <Button fx:id="registerRecruitBtn" layoutX="449.0" layoutY="339.0" mnemonicParsing="false"
-                onAction="#saveRecuiterInfoForAssigning" prefHeight="25.0" prefWidth="96.0" text="Save "/>
+                onAction="#registerRecruit" prefHeight="25.0" prefWidth="96.0" text="Save "/>
     </children>
 </AnchorPane>

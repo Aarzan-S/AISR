@@ -1,4 +1,4 @@
-package com.aisr.initial.util;
+package com.aisr.initial.util.validator;
 
 import javafx.scene.control.TextFormatter;
 

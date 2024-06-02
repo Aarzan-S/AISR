@@ -1,31 +1,32 @@
 package com.aisr.initial.controller;
 
+import com.aisr.initial.model.IModel;
 import com.aisr.initial.model.Recruit;
-import com.aisr.initial.util.Constants;
-import com.aisr.initial.util.FileUtil;
-import com.aisr.initial.util.NavigationHelper;
+import com.aisr.initial.model.RecruitModel;
+import com.aisr.initial.presenter.RecruitHistoryPresenter;
+import com.aisr.initial.util.routing.NavigationHelper;
+import com.aisr.initial.view.IView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
  * This class handles all the history related functionality
  */
-public class HistoryController implements Controller {
-    String userName;
-    String userRole;
-    List<Recruit> recruitList = new ArrayList<>();
+public class HistoryController implements Controller, IView<Recruit> {
+    public static final String STAFF_PAGE = "Staff.fxml";
+    public static final String ADMIN_PAGE = "Admin.fxml";
+
+    private RecruitHistoryPresenter presenter;
+    private String userName;
+    private String userRole;
     ObservableList<Recruit> recruits = FXCollections.observableArrayList();
     FilteredList<Recruit> filteredList = new FilteredList<>(recruits);
     @FXML
@@ -38,6 +39,7 @@ public class HistoryController implements Controller {
     /**
      * Initializes userName and userRole for this class
      * Loads recruit data from file
+     *
      * @param userName name of the logged-in user
      * @param userRole role of the logged-in user e.g. Admin, Management
      */
@@ -52,18 +54,22 @@ public class HistoryController implements Controller {
      * Loads data from file, create column definitions and set the columns along with their data.
      */
     public void loadRecruitData() {
-        fetchData();
-        createColumns();
+        recruits.addAll(presenter.loadData());
+        presenter.generateColumnDefinition(tableView, userRole);
         tableView.setItems(filteredList);
     }
 
     /**
      * Binds the searchBox property to an event listener which hand;les searching
+     *
      * @param url
      * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        IModel<Recruit> model = new RecruitModel();
+        presenter = new RecruitHistoryPresenter(model, this);
+        model.connect();
         searchBox.textProperty().addListener((obs, oldVal, newVal) -> filteredList.setPredicate(recruit -> {
             if (newVal == null || newVal.isEmpty()) {
                 return true;
@@ -73,47 +79,26 @@ public class HistoryController implements Controller {
     }
 
     /**
-     * Loads Recruit data from file and adds those records into recruits which is List of Observables
-     */
-    private void fetchData() {
-        recruitList = FileUtil.fetchRecruitHistoryDetails();
-        recruits.addAll(recruitList);
-    }
-
-    /**
-     * Creates table definition by defining rows for the table
-     */
-    private void createColumns() {
-        tableView.setEditable(false);
-        TableColumn<Recruit, String> nameColumn = new TableColumn<>("Full Name");
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("fullName"));
-
-        TableColumn<Recruit, String> phoneNumberColumn = new TableColumn<>("Phone Number");
-        phoneNumberColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
-
-        TableColumn<Recruit, String> emailColumn = new TableColumn<>("Email");
-        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
-
-        TableColumn<Recruit, String> usernameColumn = new TableColumn<>("Username");
-        usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
-
-        TableColumn<Recruit, String> recruitedByColumn = new TableColumn<>("Recruited By");
-        recruitedByColumn.setCellValueFactory(new PropertyValueFactory<>("recruitedBy"));
-
-        TableColumn<Recruit, String> recruitedOnColumn = new TableColumn<>("Recruited On");
-        recruitedOnColumn.setCellValueFactory(new PropertyValueFactory<>("recruitedOn"));
-
-        tableView.getColumns().addAll(nameColumn, phoneNumberColumn, emailColumn, usernameColumn, recruitedByColumn,
-                recruitedOnColumn);
-    }
-
-    /**
      * Navigates to Admin page or Staff page based on the logged-in user
      */
     @FXML
     private void navigateBack() {
-        String page = userRole.equals("Admin") ? Constants.ADMIN_PAGE : Constants.STAFF_PAGE;
+        String page = userRole.equals("Admin") ? ADMIN_PAGE : STAFF_PAGE;
         NavigationHelper.navigate("view/" + page, userName, userRole);
     }
 
+    @Override
+    public void display(Recruit object) {
+
+    }
+
+    @Override
+    public void display(String message, String type) {
+
+    }
+
+    @Override
+    public void clearInputs() {
+
+    }
 }

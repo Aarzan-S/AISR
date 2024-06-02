@@ -18,6 +18,12 @@ public class Staff {
     public Staff() {
     }
 
+    public Staff(String username, String password, String staffId) {
+        this.username = username;
+        this.password = password;
+        this.staffId = staffId;
+    }
+
     /**
      * Parameterized constructor containing all fields
      *

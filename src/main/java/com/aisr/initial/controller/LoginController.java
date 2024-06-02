@@ -1,32 +1,31 @@
 package com.aisr.initial.controller;
 
-import com.aisr.initial.exception.CustomException;
-import com.aisr.initial.util.Constants;
-import com.aisr.initial.util.FileUtil;
-import com.aisr.initial.util.HashingUtil;
-import com.aisr.initial.util.NavigationHelper;
+import com.aisr.initial.model.IModel;
+import com.aisr.initial.model.Staff;
+import com.aisr.initial.model.StaffModel;
+import com.aisr.initial.presenter.LoginPresenter;
+import com.aisr.initial.util.routing.NavigationHelper;
+import com.aisr.initial.view.IView;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
  * This class handles authentication and authorization
  */
-public class LoginController implements Controller {
+public class LoginController implements Controller, IView<Staff> {
+    private LoginPresenter presenter;
     @FXML
     private TextField loginUserName;
     @FXML
     private TextField loginUserPassword;
     @FXML
-    private Label err;
+    private Label messageLabel;
     @FXML
     private Button loginBtn;
 
@@ -41,81 +40,49 @@ public class LoginController implements Controller {
     /**
      * Binds loginBtn to binding which will disable button
      * if the username and password fields are empty.
+     *
      * @param url
      * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        IModel<Staff> model = new StaffModel();
+        presenter = new LoginPresenter(model, this);
+        model.connect();
         loginBtn.disableProperty().bind(
-                Bindings.createBooleanBinding(() -> {
-                    return loginUserName.getText().trim().isEmpty() ||
-                            loginUserPassword.getText().trim().isEmpty();
-                }, loginUserName.textProperty(), loginUserPassword.textProperty())
+                Bindings.createBooleanBinding(() -> loginUserName.getText().trim().isEmpty() ||
+                        loginUserPassword.getText().trim().isEmpty(), loginUserName.textProperty(), loginUserPassword.textProperty())
         );
     }
 
     /**
      * Validates username and password, if credential match, it will redirect the user to respective page
      * based on user type.
-     * If credential did not match it will show error message.
-     * @throws Exception
+     * If credential does not match, error message is shown.
      */
     @FXML
-    void onLoginClicked() throws Exception {
-        boolean isPresent = false;
-        String userRole = validateUser();
-        if (!userRole.equals("")) {
-            isPresent = true;
-        }
-        if (isPresent) {
-            String page = "";
-            switch (userRole) {
-                case Constants.ADMIN:
-                    page = Constants.ADMIN_PAGE;
-                    break;
-                case Constants.MANAGEMENT:
-                    page = Constants.MANAGEMENT_PAGE;
-                    break;
-                case Constants.STAFF:
-                    page = Constants.STAFF_PAGE;
-                    break;
-                default:
-                    page = Constants.LOGIN_PAGE;
-                    break;
-            }
-            NavigationHelper.navigate("view/" + page, loginUserName.getText().trim(), userRole);
-        } else {
-            err.setText("Incorrect Username or password");
-            throw new CustomException("Incorrect Username or password.");
+    void onLoginClicked() {
+        Staff staff = new Staff(loginUserName.getText().trim(),
+                loginUserPassword.getText().trim(),
+                "");
+        if (presenter.login(staff)) {
+            NavigationHelper.navigate("view/" + staff.getStaffId().split("-")[0] + ".fxml",
+                    staff.getUsername(), staff.getStaffId().split("-")[0]);
         }
     }
 
-    /**
-     * Checks whether username and password provided match or not.
-     * @return user type if credentials are valid else empty string
-     * @throws Exception
-     */
-    private String validateUser() throws Exception {
-        if (loginUserName.getText().trim().equals("superadmin") && loginUserName.getText().trim().equals("superadmin")) {
-            return "Staff";
-        }
-        if (!FileUtil.doesFileExists(Constants.STAFF_CSV_FILE)) {
-            err.setText("Staff record file not found.");
-            throw new Exception("Staff record file not found");
-        }
-        try (BufferedReader br = new BufferedReader(new FileReader("staff.csv"))) {
-            String line;
-            br.readLine();
-            while ((line = br.readLine()) != null) {
-                String[] columns = line.split(",");
-                if (loginUserName.getText().trim().equals(columns[5].trim()) &&
-                        HashingUtil.verifyHash(loginUserPassword.getText().trim(), columns[6].trim())) {
-                    return columns[0].trim();
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Could not read staff record file.");
-        }
-        return "";
+    @Override
+    public void display(Staff object) {
+
+    }
+
+    @Override
+    public void display(String message, String type) {
+        this.messageLabel.setText(message);
+    }
+
+    @Override
+    public void clearInputs() {
+
     }
 }

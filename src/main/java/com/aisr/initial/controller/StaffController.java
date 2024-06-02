@@ -1,7 +1,9 @@
 package com.aisr.initial.controller;
 
-import com.aisr.initial.util.Constants;
-import com.aisr.initial.util.NavigationHelper;
+import com.aisr.initial.model.*;
+import com.aisr.initial.presenter.StaffPresenter;
+import com.aisr.initial.util.routing.NavigationHelper;
+import com.aisr.initial.view.IView;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
@@ -11,9 +13,15 @@ import java.util.ResourceBundle;
 /**
  * This class handles mainly Management and Admin registration
  */
-public class StaffController implements Controller {
-    String userName;
-    String userRole;
+public class StaffController implements Controller, IView<Staff> {
+    private static final String LOGIN_PAGE = "Login.fxml";
+    private static final String RECRUIT_HISTORY = "History.fxml";
+    private static final String ADMIN_REGISTRATION = "AdminRegistration.fxml";
+    private static final String MANAGEMENT_REGISTRATION = "ManagementRegistration.fxml";
+
+    private StaffPresenter presenter;
+    private String userName;
+    private String userRole;
     @FXML
     Label welcomeLabel;
 
@@ -35,7 +43,9 @@ public class StaffController implements Controller {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+        IModel<Staff> model = new StaffModel();
+        presenter = new StaffPresenter(model, this);
+        model.connect();
     }
 
     /**
@@ -43,7 +53,7 @@ public class StaffController implements Controller {
      */
     @FXML
     private void showManagementRegistration() {
-        NavigationHelper.navigate("view/" + Constants.MANAGEMENT_REGISTRATION, userName, userRole);
+        NavigationHelper.navigate("view/" + MANAGEMENT_REGISTRATION, userName, userRole);
     }
 
     /**
@@ -51,7 +61,7 @@ public class StaffController implements Controller {
      */
     @FXML
     private void showAdminRegistration() {
-        NavigationHelper.navigate("view/" + Constants.ADMIN_REGISTRATION, userName, userRole);
+        NavigationHelper.navigate("view/" + ADMIN_REGISTRATION, userName, userRole);
     }
 
     /**
@@ -59,7 +69,7 @@ public class StaffController implements Controller {
      */
     @FXML
     private void showRecruitHistory() {
-        NavigationHelper.navigate("view/" + Constants.RECRUIT_HISTORY, userName, userRole);
+        NavigationHelper.navigate("view/" + RECRUIT_HISTORY, userName, userRole);
     }
 
     /**
@@ -67,8 +77,21 @@ public class StaffController implements Controller {
      */
     @FXML
     private void logOut() {
-        NavigationHelper.navigate("view/" + Constants.LOGIN_PAGE, "", "");
+        NavigationHelper.navigate("view/" + LOGIN_PAGE, "", "");
     }
 
 
+    @Override
+    public void display(Staff object) {
+
+    }
+
+    @Override
+    public void display(String message, String type) {
+    }
+
+    @Override
+    public void clearInputs() {
+
+    }
 }

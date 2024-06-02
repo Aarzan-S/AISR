@@ -20,8 +20,8 @@
                 <Font size="14.0"/>
             </font>
         </Label>
-        <Label fx:id="adminErrorMessage" alignment="CENTER" contentDisplay="CENTER" layoutX="107.0" layoutY="61.0"
-               prefHeight="25.0" prefWidth="399.0" textFill="#f23939"/>
+        <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="74.0" layoutY="61.0"
+               prefHeight="25.0" prefWidth="465.0" textFill="#72d46d"/>
         <TextField fx:id="adminStaffFullName" layoutX="100.0" layoutY="111.0" prefHeight="25.0" prefWidth="182.0"/>
         <TextField fx:id="adminStaffAddress" layoutX="376.0" layoutY="111.0" prefHeight="25.0" prefWidth="196.0"/>
         <TextField fx:id="adminStaffPhone" layoutX="99.0" layoutY="157.0" prefHeight="25.0" prefWidth="182.0"/>
@@ -37,8 +37,6 @@
         <Label layoutX="21.0" layoutY="263.0" text="Position Type"/>
         <ChoiceBox fx:id="adminStaffPositionType" layoutX="112.0" layoutY="259.0" prefHeight="25.0" prefWidth="169.0"/>
         <Label layoutX="24.0" layoutY="263.0"/>
-        <Label fx:id="adminSuccessMessage" alignment="CENTER" contentDisplay="CENTER" layoutX="74.0" layoutY="61.0"
-               prefHeight="25.0" prefWidth="465.0" textFill="#72d46d"/>
         <Button fx:id="addAdminBtn" layoutX="112.0" layoutY="319.0" mnemonicParsing="false" onAction="#addAdminDetails"
                 prefHeight="25.0" prefWidth="59.0" text="Add"/>
         <Button fx:id="registerAdminBtn" layoutX="454.0" layoutY="319.0" mnemonicParsing="false"
